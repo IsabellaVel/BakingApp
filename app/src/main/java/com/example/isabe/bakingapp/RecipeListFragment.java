@@ -28,12 +28,16 @@ import butterknife.Unbinder;
  */
 
 public class RecipeListFragment extends Fragment implements LoaderManager.LoaderCallbacks<List<RecipeContent>> {
+
     private static final String RECIPE_JSON_URI =
             "https://d17h27t6h515a5.cloudfront.net/topher/2017/May/59121517_baking/baking.json";
+    private static final int LOADER_ID = 11;
     private static final String LOG_TAG = RecipeListFragment.class.getSimpleName();
     private RecipeListAdapter mRecipeAdapter;
+
     @BindView(R.id.recipes_list_rv)
     RecyclerView mRecipeListRv;
+
     private RecyclerView.LayoutManager layoutManager;
 
     private List<RecipeContent> mRecipeList;
@@ -46,7 +50,7 @@ public class RecipeListFragment extends Fragment implements LoaderManager.Loader
     public RecipeListFragment() {
     }
 
-    public static RecipeListFragment newInstance(){
+    public static RecipeListFragment newInstance() {
         return new RecipeListFragment();
     }
 
@@ -61,16 +65,9 @@ public class RecipeListFragment extends Fragment implements LoaderManager.Loader
 
         mRecipeAdapter.setHasStableIds(true);
 
-        layoutManager = new RecyclerView.LayoutManager() {
-            @Override
-            public RecyclerView.LayoutParams generateDefaultLayoutParams() {
-                return null;
-            }
-        };
-        mRecipeListRv.setLayoutManager(layoutManager);
-        mRecipeListRv.setHasFixedSize(true);
-        mRecipeListRv.setAdapter(mRecipeAdapter);
 
+        LoaderManager loaderManager = getLoaderManager();
+        getLoaderManager().initLoader(LOADER_ID, null, this);
         return view;
     }
 
@@ -83,12 +80,25 @@ public class RecipeListFragment extends Fragment implements LoaderManager.Loader
 
     @Override
     public void onLoadFinished(android.support.v4.content.Loader<List<RecipeContent>> loader, List<RecipeContent> data) {
+        //setup the recyclerView
+        layoutManager = new RecyclerView.LayoutManager() {
+            @Override
+            public RecyclerView.LayoutParams generateDefaultLayoutParams() {
+                return null;
+            }
+        };
+
+        mRecipeAdapter = new RecipeListAdapter(getActivity(), mRecipeList, mRecipeOnClickListener);
+        mRecipeListRv.setLayoutManager(layoutManager);
+        mRecipeListRv.setHasFixedSize(true);
+        mRecipeListRv.setAdapter(mRecipeAdapter);
+
+        //setup the adapter
         mRecipeAdapter.clear();
         if (mRecipeList != null && !mRecipeList.isEmpty()) {
             mRecipeAdapter.addAll(mRecipeList);
             Log.e(LOG_TAG, "Successful LoadFinished for List of recipes.");
         }
-
     }
 
     @Override

@@ -85,6 +85,7 @@ public class RecipeListAdapter extends RecyclerView.Adapter<RecipeListAdapter.Vi
     }
 
     public void clear() {
+        List<RecipeContent> recipesList = new ArrayList<>();
         recipesList.clear();
     }
 

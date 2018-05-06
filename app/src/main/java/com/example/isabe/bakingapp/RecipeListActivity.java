@@ -2,17 +2,25 @@ package com.example.isabe.bakingapp;
 
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
+import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
 
 
+import com.example.isabe.bakingapp.adapters.RecipeListAdapter;
 import com.example.isabe.bakingapp.adapters.RecipeListAdapterDefaultGenerated;
 import com.example.isabe.bakingapp.objects.RecipeContent;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import butterknife.BindView;
 
 /**
  * An activity representing a list of Recipes. This activity
@@ -29,6 +37,11 @@ public class RecipeListActivity extends AppCompatActivity {
      * device.
      */
     private boolean mTwoPane;
+    private List<RecipeContent> mRecipesList = new ArrayList<>();
+    private RecipeListAdapter.RecipeOnClickListener mRecipeOnClickListener;
+
+    @BindView(R.id.recipes_list_rv)
+    RecyclerView mRecipesRv;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -55,9 +68,6 @@ public class RecipeListActivity extends AppCompatActivity {
             mTwoPane = true;
         }
 
-        View recyclerView = findViewById(R.id.recipe_list);
-        assert recyclerView != null;
-        setupRecyclerView((RecyclerView) recyclerView);
 
         RecipeListFragment recipeListFragment = (RecipeListFragment) getSupportFragmentManager().
                 findFragmentById(R.id.frameLayout);
@@ -66,15 +76,11 @@ public class RecipeListActivity extends AppCompatActivity {
             recipeListFragment = RecipeListFragment.newInstance();
 
             android.support.v4.app.FragmentManager fragmentManager = getSupportFragmentManager();
-            RecipeListFragment recipeListFragment1 = new RecipeListFragment();
             fragmentManager.beginTransaction()
                     .add(R.id.frameLayout, recipeListFragment)
                     .commit();
         }
     }
 
-    private void setupRecyclerView(@NonNull RecyclerView recyclerView) {
-        recyclerView.setAdapter(new RecipeListAdapterDefaultGenerated(this, RecipeContent.ITEMS, mTwoPane));
-    }
 
 }
