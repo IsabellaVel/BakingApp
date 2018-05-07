@@ -18,6 +18,7 @@ import com.example.isabe.bakingapp.objects.RecipeContent;
 import com.example.isabe.bakingapp.utilities.NetworkUtils;
 
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.BindInt;
@@ -78,15 +79,15 @@ public class RecipeListFragment extends Fragment implements LoaderManager.Loader
         //setup the recyclerView
 
         mRecipeListRv.setLayoutManager(new GridLayoutManager(getActivity(), gridColNo));
-        mRecipeAdapter = new RecipeListAdapter(getActivity(), data, mRecipeOnClickListener);
+        mRecipeAdapter = new RecipeListAdapter(getActivity(),data, mRecipeOnClickListener);
         mRecipeAdapter.setHasStableIds(true);
         mRecipeListRv.setHasFixedSize(true);
         mRecipeListRv.setAdapter(mRecipeAdapter);
 
         //setup the adapter
         mRecipeAdapter.clear();
-        if (mRecipeList != null && !mRecipeList.isEmpty()) {
-            mRecipeAdapter.addAll(mRecipeList);
+        if (data != null && !data.isEmpty()) {
+            mRecipeAdapter.addAll(data);
             Log.e(LOG_TAG, "Successful LoadFinished for List of recipes.");
         }
     }
