@@ -64,7 +64,6 @@ public class RecipeListAdapter extends RecyclerView.Adapter<RecipeListAdapter.Vi
 
     @Override
     public int getItemCount() {
-        List<RecipeContent> recipesList = new ArrayList<>();
         return recipesList.size();
     }
 
@@ -85,7 +84,6 @@ public class RecipeListAdapter extends RecyclerView.Adapter<RecipeListAdapter.Vi
     }
 
     public void clear() {
-        List<RecipeContent> recipesList = new ArrayList<>();
         recipesList.clear();
     }
 

@@ -45,11 +45,10 @@ public class RecipeDbJSONUtils {
             return null;
         }
 
-        List<RecipeContent> recipeContentsList = new ArrayList<RecipeContent>();
+        ArrayList<RecipeContent> recipeJsonList = new ArrayList<>();
 
         try {
             JSONArray recipesJSONArray = new JSONArray(recipeJSONString);
-            ArrayList<RecipeContent> recipeContentArrayList = new ArrayList<>();
 
             for (int i = 0; i < recipesJSONArray.length(); i++) {
                 JSONObject currentRecipe = recipesJSONArray.getJSONObject(i);
@@ -67,8 +66,8 @@ public class RecipeDbJSONUtils {
                     String measure = currentIngreds.optString(RECIPE_MEASURE);
                     String ingredient = currentIngreds.optString(RECIPE_INGREDIENT);
 
-                    Ingredient ingredInList = new Ingredient(qty, measure, ingredient);
-                    ingredientsList.add(ingredInList);
+                    Ingredient ingredItem = new Ingredient(qty, measure, ingredient);
+                    ingredientsList.add(ingredItem);
 
                 }
 
@@ -84,22 +83,20 @@ public class RecipeDbJSONUtils {
                     String videoURL = currentSteps.optString(RECIPE_VIDEO_URL);
                     String thumbnailURL = currentSteps.optString(RECIPE_THUMBNAIL_URL);
 
-                    BakingStep bakingStepInList = new BakingStep(idStep, shortDescr, descr, videoURL, thumbnailURL);
-                    bakingStepArrayList.add(bakingStepInList);
+                    BakingStep stepItem = new BakingStep(idStep, shortDescr, descr, videoURL, thumbnailURL);
+                    bakingStepArrayList.add(stepItem);
                 }
 
-                RecipeContent recipeContentInList = new RecipeContent
+                RecipeContent recipeItem = new RecipeContent
                         (id, name, ingredientsList, bakingStepArrayList, image);
-                recipeContentArrayList.add(recipeContentInList);
-
-
+                recipeJsonList.add(recipeItem);
             }
 
         } catch (JSONException e) {
             e.printStackTrace();
             Log.e(LOG_TAG, "Problem parsing Recipe JSON results.", e);
         }
-        return recipeContentsList;
+        return recipeJsonList;
     }
 
     public static List<Ingredient> getIgredientsFromJSON(String recipeJSONString) {

@@ -4,11 +4,13 @@ import android.support.v4.app.LoaderManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.GridView;
 
 import com.example.isabe.bakingapp.adapters.RecipeListAdapter;
 import com.example.isabe.bakingapp.loaders.RecipeLoader;
@@ -38,8 +40,6 @@ public class RecipeListFragment extends Fragment implements LoaderManager.Loader
     @BindView(R.id.recipes_list_rv)
     RecyclerView mRecipeListRv;
 
-    private RecyclerView.LayoutManager layoutManager;
-
     private List<RecipeContent> mRecipeList;
     private RecipeListAdapter.RecipeOnClickListener mRecipeOnClickListener;
     @BindInt(R.integer.grid_column_number)
@@ -61,12 +61,7 @@ public class RecipeListFragment extends Fragment implements LoaderManager.Loader
         View view = inflater.inflate(R.layout.fragment_recipe_list, container, false);
         unbinder = ButterKnife.bind(this, view);
 
-        mRecipeAdapter = new RecipeListAdapter(getActivity(), mRecipeList, mRecipeOnClickListener);
-
-        mRecipeAdapter.setHasStableIds(true);
-
-
-        LoaderManager loaderManager = getLoaderManager();
+       LoaderManager loaderManager = getLoaderManager();
         getLoaderManager().initLoader(LOADER_ID, null, this);
         return view;
     }
@@ -81,15 +76,10 @@ public class RecipeListFragment extends Fragment implements LoaderManager.Loader
     @Override
     public void onLoadFinished(android.support.v4.content.Loader<List<RecipeContent>> loader, List<RecipeContent> data) {
         //setup the recyclerView
-        layoutManager = new RecyclerView.LayoutManager() {
-            @Override
-            public RecyclerView.LayoutParams generateDefaultLayoutParams() {
-                return null;
-            }
-        };
 
-        mRecipeAdapter = new RecipeListAdapter(getActivity(), mRecipeList, mRecipeOnClickListener);
-        mRecipeListRv.setLayoutManager(layoutManager);
+        mRecipeListRv.setLayoutManager(new GridLayoutManager(getActivity(), gridColNo));
+        mRecipeAdapter = new RecipeListAdapter(getActivity(), data, mRecipeOnClickListener);
+        mRecipeAdapter.setHasStableIds(true);
         mRecipeListRv.setHasFixedSize(true);
         mRecipeListRv.setAdapter(mRecipeAdapter);
 
