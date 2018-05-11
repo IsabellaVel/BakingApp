@@ -12,6 +12,7 @@ import android.widget.TextView;
 import com.example.isabe.bakingapp.R;
 import com.example.isabe.bakingapp.objects.BakingStep;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.BindView;
@@ -22,46 +23,27 @@ import butterknife.ButterKnife;
  */
 
 public class RecipeStepsAdapter extends RecyclerView.Adapter<RecipeStepsAdapter.ViewHolder> {
-    private List<BakingStep> stepList;
+    private List<BakingStep> stepList = new ArrayList<>();
     public final OnStepClickListener onStepClickListener;
     private int currentPosition;
+    private Context mContext;
 
+    @BindView(R.id.list_step_name)
+    TextView mStepName;
+
+    public interface OnStepClickListener {
+        void onClick(int stepId);
+    }
 
     public RecipeStepsAdapter(Context context, List<BakingStep> steps, OnStepClickListener listener) {
+        mContext = context;
         stepList = steps;
         onStepClickListener = listener;
     }
 
-    @Override
-    public RecipeStepsAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.fragment_recipe_item_screen, parent, false);
-        return new ViewHolder(view);
-    }
-
-    @Override
-    public void onBindViewHolder(ViewHolder holder, int position) {
-        currentPosition = position;
-        final BakingStep bakingStep = stepList.get(position);
-        holder.mTvDescription.setText(bakingStep.getBriefStepDescription());
-    }
-
-    @Override
-    public int getItemCount() {
-        return stepList.size();
-    }
-
     public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
-        @BindView(R.id.step_item_layout)
-        LinearLayout stepLayout;
-
-        @BindView(R.id.step_description)
-        TextView stepDescr;
-
-        @BindView(R.id.step_video_launcher_icon)
-        ImageView stepVideoIcon;
-
-        public TextView mTvDescription;
+        @BindView(R.id.list_step_name)
+        TextView mStepName;
 
         public ViewHolder(View itemView) {
             super(itemView);
@@ -70,20 +52,39 @@ public class RecipeStepsAdapter extends RecyclerView.Adapter<RecipeStepsAdapter.
         }
 
         @Override
-        public String toString() {
-            return super.toString() + " '" + mTvDescription.getText();
-        }
-
-
-        @Override
         public void onClick(View view) {
-            onStepClickListener.stepClicked(currentPosition);
+            int adapterPosition = getAdapterPosition();
+            onStepClickListener.onClick(adapterPosition);
             notifyDataSetChanged();
         }
     }
 
-    public interface OnStepClickListener {
-        void stepClicked(int stepId);
+    @Override
+    public RecipeStepsAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        View view = LayoutInflater.from(parent.getContext())
+                .inflate(R.layout.fragment_step_list_item, parent, false);
+        return new ViewHolder(view);
     }
+
+    @Override
+    public void onBindViewHolder(ViewHolder holder, int position) {
+        final BakingStep bakingStep = stepList.get(position);
+        final int currentId = bakingStep.getId();
+        holder.mStepName.setText(bakingStep.getBriefStepDescription());
+    }
+
+    @Override
+    public int getItemCount() {
+        return stepList.size();
+    }
+
+    public void clear() {
+        stepList.clear();
+    }
+
+    public void addAll(List<BakingStep> list) {
+        stepList.addAll(list);
+    }
+
 }
 

@@ -22,7 +22,7 @@ import java.util.List;
  */
 
 
-public class RecipeListAdapterDefaultGenerated
+/**public class RecipeListAdapterDefaultGenerated
         extends RecyclerView.Adapter<RecipeListAdapterDefaultGenerated.ViewHolder> {
 
     private final RecipeListActivity mParentActivity;
@@ -87,3 +87,4 @@ public class RecipeListAdapterDefaultGenerated
         }
     }
 }
+**/

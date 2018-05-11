@@ -14,7 +14,7 @@ import android.view.View;
 
 
 import com.example.isabe.bakingapp.adapters.RecipeListAdapter;
-import com.example.isabe.bakingapp.adapters.RecipeListAdapterDefaultGenerated;
+//import com.example.isabe.bakingapp.adapters.RecipeListAdapterDefaultGenerated;
 import com.example.isabe.bakingapp.objects.RecipeContent;
 
 import java.util.ArrayList;

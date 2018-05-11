@@ -1,15 +1,16 @@
 package com.example.isabe.bakingapp;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.app.ActionBar;
-import android.support.v4.app.NavUtils;
-import android.view.MenuItem;
+import android.widget.TextView;
+
+import butterknife.BindView;
+import butterknife.OnClick;
 
 /**
  * An activity representing a single Recipe detail screen. This
@@ -18,6 +19,18 @@ import android.view.MenuItem;
  * in a {@link RecipeListActivity}.
  */
 public class RecipeDetailActivity extends AppCompatActivity {
+    private static final int DEFAULT_VALUE = 1;
+    public static String RECIPE_ID_EXTRA_FIELD = "recipe_id";
+    int clickedId;
+    boolean mTwoPane;
+    @BindView(R.id.ingreds_details)
+    TextView mTvIngreds;
+
+    public static Intent sendData(Context context, int recipeId){
+        Intent intent = new Intent(context, RecipeDetailActivity.class);
+        intent.putExtra(RECIPE_ID_EXTRA_FIELD, recipeId);
+        return intent;
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -26,45 +39,47 @@ public class RecipeDetailActivity extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.detail_toolbar);
         setSupportActionBar(toolbar);
 
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own detail action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-            }
-        });
-
         // Show the Up button in the action bar.
         ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) {
             actionBar.setDisplayHomeAsUpEnabled(true);
         }
-
-        // savedInstanceState is non-null when there is fragment state
-        // saved from previous configurations of this activity
-        // (e.g. when rotating the screen from portrait to landscape).
-        // In this case, the fragment will automatically be re-added
-        // to its container so we don't need to manually add it.
-        // For more information, see the Fragments API guide at:
-        //
-        // http://developer.android.com/guide/components/fragments.html
-        //
-        if (savedInstanceState == null) {
-            // Create the detail fragment and add it to the activity
+         // Create the detail fragment and add it to the activity
             // using a fragment transaction.
-            Bundle arguments = new Bundle();
-            arguments.putString(RecipeDetailFragment.ARG_ITEM_ID,
-                    getIntent().getStringExtra(RecipeDetailFragment.ARG_ITEM_ID));
-            RecipeDetailFragment fragment = new RecipeDetailFragment();
-            fragment.setArguments(arguments);
+            int recipeId = getIntent().getIntExtra(RECIPE_ID_EXTRA_FIELD, DEFAULT_VALUE);
+
+            RecipeDetailFragment recipeDetailFragment = RecipeDetailFragment.newInstance(recipeId);
             getSupportFragmentManager().beginTransaction()
-                    .add(R.id.recipe_detail_container, fragment)
+                    .add(R.id.fragment_details_container, recipeDetailFragment)
                     .commit();
+
+
+        // TODO check if this would be the proper view from the layout. Otherwise, create a separate layout file.
+        if (findViewById(R.id.recipe_detail_container) != null) {
+            // The detail container view will be present only in the
+            // large-screen layouts (res/values-w900dp).
+            // If this view is present, then the
+            // activity should be in two-pane mode.
+            mTwoPane = true;
+            recipeDetailFragment = new RecipeDetailFragment();
+            getSupportFragmentManager().beginTransaction()
+                    .add(R.id.fragment_details_container, recipeDetailFragment)
+                    .commit();
+
+            // TODO Add fragment for Video and steps instructions
+           RecipeStepsFragment recipeStepsFragment = new RecipeStepsFragment();
+           getSupportFragmentManager().beginTransaction()
+                   .add(R.id.frame_recycler, recipeStepsFragment)
+                   .commit();
+
         }
+
+    }
+    @OnClick(R.id.ingreds_details)
+    public void showDetails(View view) {
     }
 
-    @Override
+    /**@Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
         if (id == android.R.id.home) {
@@ -80,4 +95,5 @@ public class RecipeDetailActivity extends AppCompatActivity {
         }
         return super.onOptionsItemSelected(item);
     }
+    **/
 }

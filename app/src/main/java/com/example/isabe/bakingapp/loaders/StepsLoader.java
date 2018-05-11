@@ -3,6 +3,7 @@ package com.example.isabe.bakingapp.loaders;
 import android.content.Context;
 import android.support.v4.content.AsyncTaskLoader;
 
+import com.example.isabe.bakingapp.objects.BakingStep;
 import com.example.isabe.bakingapp.objects.RecipeContent;
 import com.example.isabe.bakingapp.utilities.NetworkUtils;
 
@@ -15,11 +16,11 @@ import java.util.List;
  * Created by isabe on 5/6/2018.
  */
 
-public class RecipeLoader extends AsyncTaskLoader<List<RecipeContent>> {
+public class StepsLoader extends AsyncTaskLoader<List<BakingStep>> {
     private final String mUrl;
-    private List<RecipeContent> recipeContentList;
+    private List<BakingStep> bakingStepList = new ArrayList<>();
 
-    public RecipeLoader(Context context, String url) {
+    public StepsLoader(Context context, String url) {
         super(context);
         mUrl = url;
     }
@@ -29,15 +30,15 @@ public class RecipeLoader extends AsyncTaskLoader<List<RecipeContent>> {
     }
 
     @Override
-    public List<RecipeContent> loadInBackground() {
+    public List<BakingStep> loadInBackground() {
         if (mUrl == null) {
             return null;
         }
         try {
-            recipeContentList = NetworkUtils.fetchRecipeData(mUrl);
+            bakingStepList = NetworkUtils.fetchStepsData(mUrl);
         } catch (JSONException e) {
             e.printStackTrace();
         }
-        return recipeContentList;
+        return bakingStepList;
     }
 }

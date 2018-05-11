@@ -38,8 +38,8 @@ public class RecipeDbJSONUtils {
     private static final String LOG_TAG = RecipeDbJSONUtils.class.getSimpleName();
 
     public static List<RecipeContent> getRecipeDetailFromJSON(String recipeJSONString) {
-        List<Ingredient> ingredientList;
-        List<BakingStep> bakingStepList;
+        List<Ingredient> ingredientList = new ArrayList<>();
+        List<BakingStep> bakingStepList = new ArrayList<>();
 
         if (TextUtils.isEmpty(recipeJSONString)) {
             return null;
@@ -141,7 +141,6 @@ public class RecipeDbJSONUtils {
 
         try {
             JSONArray recipesJSONArray = new JSONArray(recipeJSONString);
-            ArrayList<BakingStep> bakingStepArrayList = new ArrayList<>();
 
             for (int i = 0; i < recipesJSONArray.length(); i++) {
                 JSONObject currentRecipe = recipesJSONArray.getJSONObject(i);
@@ -156,8 +155,8 @@ public class RecipeDbJSONUtils {
                     String videoURL = currentSteps.optString(RECIPE_VIDEO_URL);
                     String thumbnailURL = currentSteps.optString(RECIPE_THUMBNAIL_URL);
 
-                    BakingStep bakingStepInList = new BakingStep(idStep, shortDescr, descr, videoURL, thumbnailURL);
-                    bakingStepArrayList.add(bakingStepInList);
+                    BakingStep stepInList = new BakingStep(idStep, shortDescr, descr, videoURL, thumbnailURL);
+                    bakingStepList.add(stepInList);
                 }
 
             }

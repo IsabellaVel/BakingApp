@@ -1,6 +1,7 @@
 package com.example.isabe.bakingapp;
 
 import android.support.v4.app.LoaderManager;
+import android.support.v4.app.LoaderManager.LoaderCallbacks;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -32,7 +33,7 @@ import butterknife.Unbinder;
 
 public class RecipeListFragment extends Fragment implements LoaderManager.LoaderCallbacks<List<RecipeContent>> {
 
-    private static final String RECIPE_JSON_URI =
+    public static final String RECIPE_JSON_URI =
             "https://d17h27t6h515a5.cloudfront.net/topher/2017/May/59121517_baking/baking.json";
     private static final int LOADER_ID = 11;
     private static final String LOG_TAG = RecipeListFragment.class.getSimpleName();
@@ -62,8 +63,8 @@ public class RecipeListFragment extends Fragment implements LoaderManager.Loader
         View view = inflater.inflate(R.layout.fragment_recipe_list, container, false);
         unbinder = ButterKnife.bind(this, view);
 
-       LoaderManager loaderManager = getLoaderManager();
-        getLoaderManager().initLoader(LOADER_ID, null, this);
+        LoaderManager loaderManager = getLoaderManager();
+        loaderManager.initLoader(LOADER_ID, null, this);
         return view;
     }
 
@@ -75,20 +76,20 @@ public class RecipeListFragment extends Fragment implements LoaderManager.Loader
     }
 
     @Override
-    public void onLoadFinished(android.support.v4.content.Loader<List<RecipeContent>> loader, List<RecipeContent> data) {
+    public void onLoadFinished(android.support.v4.content.Loader<List<RecipeContent>> loader, List<RecipeContent> dataRecipe) {
         //setup the recyclerView
+        mRecipeListRv.setLayoutManager(new GridLayoutManager(getContext(), gridColNo));
 
-        mRecipeListRv.setLayoutManager(new GridLayoutManager(getActivity(), gridColNo));
-        mRecipeAdapter = new RecipeListAdapter(getActivity(),data, mRecipeOnClickListener);
+        mRecipeAdapter = new RecipeListAdapter(getActivity(), dataRecipe, mRecipeOnClickListener);
         mRecipeAdapter.setHasStableIds(true);
         mRecipeListRv.setHasFixedSize(true);
         mRecipeListRv.setAdapter(mRecipeAdapter);
 
         //setup the adapter
-        mRecipeAdapter.clear();
-        if (data != null && !data.isEmpty()) {
-            mRecipeAdapter.addAll(data);
-            Log.e(LOG_TAG, "Successful LoadFinished for List of recipes.");
+      //  mRecipeAdapter.clear();
+        if (dataRecipe != null && !dataRecipe.isEmpty()) {
+            mRecipeAdapter.addAll(dataRecipe);
+            Log.e(LOG_TAG, "Successful LoadFinished for List of Recipes.");
         }
     }
 

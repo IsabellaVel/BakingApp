@@ -17,13 +17,18 @@
             android:layout_height="wrap_content"
             android:padding="5dp"
             android:textSize="12sp"
-            tools:text="Ingredients list: \nIngred1\Ingred2" />
+            tools:text="Ingredients list: \nItem1\Item2" />
     </android.support.v7.widget.CardView>
 
-    <android.support.v7.widget.RecyclerView
-        android:id="@+id/recipe_steps_list_rv"
+    <android.support.v7.widget.CardView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_margin="5dp"/>
+        android:layout_height="wrap_content">
+
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/recipe_steps_list_rv"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="5dp" />
+    </android.support.v7.widget.CardView>
 
 </LinearLayout>
