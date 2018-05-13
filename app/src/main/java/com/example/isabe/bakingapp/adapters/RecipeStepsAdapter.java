@@ -1,15 +1,15 @@
 package com.example.isabe.bakingapp.adapters;
 
 import android.content.Context;
+import android.content.Intent;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.example.isabe.bakingapp.R;
+import com.example.isabe.bakingapp.RecipeStepActivity;
 import com.example.isabe.bakingapp.objects.BakingStep;
 
 import java.util.ArrayList;
@@ -55,6 +55,10 @@ public class RecipeStepsAdapter extends RecyclerView.Adapter<RecipeStepsAdapter.
         public void onClick(View view) {
             int adapterPosition = getAdapterPosition();
             onStepClickListener.onClick(adapterPosition);
+
+            Intent intent = new Intent(view.getContext(), RecipeStepActivity.class);
+            intent.putExtra("step_id", currentPosition);
+            view.getContext().startActivity(intent);
             notifyDataSetChanged();
         }
     }
@@ -69,7 +73,7 @@ public class RecipeStepsAdapter extends RecyclerView.Adapter<RecipeStepsAdapter.
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
         final BakingStep bakingStep = stepList.get(position);
-        final int currentId = bakingStep.getId();
+        currentPosition = bakingStep.getId();
         holder.mStepName.setText(bakingStep.getBriefStepDescription());
     }
 

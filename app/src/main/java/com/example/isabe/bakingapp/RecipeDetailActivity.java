@@ -9,6 +9,8 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.app.ActionBar;
 import android.widget.TextView;
 
+import com.example.isabe.bakingapp.objects.RecipeContent;
+
 import butterknife.BindView;
 import butterknife.OnClick;
 
@@ -25,8 +27,9 @@ public class RecipeDetailActivity extends AppCompatActivity {
     boolean mTwoPane;
     @BindView(R.id.ingreds_details)
     TextView mTvIngreds;
+    private RecipeContent mRecipeDetails;
 
-    public static Intent sendData(Context context, int recipeId){
+    public static Intent sendData(Context context, int recipeId) {
         Intent intent = new Intent(context, RecipeDetailActivity.class);
         intent.putExtra(RECIPE_ID_EXTRA_FIELD, recipeId);
         return intent;
@@ -44,14 +47,22 @@ public class RecipeDetailActivity extends AppCompatActivity {
         if (actionBar != null) {
             actionBar.setDisplayHomeAsUpEnabled(true);
         }
-         // Create the detail fragment and add it to the activity
-            // using a fragment transaction.
-            int recipeId = getIntent().getIntExtra(RECIPE_ID_EXTRA_FIELD, DEFAULT_VALUE);
 
-            RecipeDetailFragment recipeDetailFragment = RecipeDetailFragment.newInstance(recipeId);
-            getSupportFragmentManager().beginTransaction()
-                    .add(R.id.fragment_details_container, recipeDetailFragment)
-                    .commit();
+        if (savedInstanceState != null) {
+            mRecipeDetails = savedInstanceState.getParcelable("this_recipe");
+        }
+
+         mRecipeDetails = getIntent().getExtras().getParcelable("this_recipe");
+
+        // Create the detail fragment and add it to the activity
+        // using a fragment transaction.
+        int recipeId = getIntent().getIntExtra(RECIPE_ID_EXTRA_FIELD, DEFAULT_VALUE);
+
+
+        RecipeDetailFragment recipeDetailFragment = RecipeDetailFragment.newInstance(recipeId);
+        getSupportFragmentManager().beginTransaction()
+                .add(R.id.fragment_details_container, recipeDetailFragment)
+                .commit();
 
 
         // TODO check if this would be the proper view from the layout. Otherwise, create a separate layout file.
@@ -67,33 +78,33 @@ public class RecipeDetailActivity extends AppCompatActivity {
                     .commit();
 
             // TODO Add fragment for Video and steps instructions
-           RecipeStepsFragment recipeStepsFragment = new RecipeStepsFragment();
-           getSupportFragmentManager().beginTransaction()
-                   .add(R.id.frame_recycler, recipeStepsFragment)
-                   .commit();
+            RecipeStepsExoPlayFragment recipeStepsFragment = new RecipeStepsExoPlayFragment();
+            getSupportFragmentManager().beginTransaction()
+                    .add(R.id.frame_recycler, recipeStepsFragment)
+                    .commit();
 
         }
 
     }
+
     @OnClick(R.id.ingreds_details)
     public void showDetails(View view) {
     }
 
-    /**@Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        int id = item.getItemId();
-        if (id == android.R.id.home) {
-            // This ID represents the Home or Up button. In the case of this
-            // activity, the Up button is shown. Use NavUtils to allow users
-            // to navigate up one level in the application structure. For
-            // more details, see the Navigation pattern on Android Design:
-            //
-            // http://developer.android.com/design/patterns/navigation.html#up-vs-back
-            //
-            NavUtils.navigateUpTo(this, new Intent(this, RecipeListActivity.class));
-            return true;
-        }
-        return super.onOptionsItemSelected(item);
+    /**@Override public boolean onOptionsItemSelected(MenuItem item) {
+    int id = item.getItemId();
+    if (id == android.R.id.home) {
+    // This ID represents the Home or Up button. In the case of this
+    // activity, the Up button is shown. Use NavUtils to allow users
+    // to navigate up one level in the application structure. For
+    // more details, see the Navigation pattern on Android Design:
+    //
+    // http://developer.android.com/design/patterns/navigation.html#up-vs-back
+    //
+    NavUtils.navigateUpTo(this, new Intent(this, RecipeListActivity.class));
+    return true;
     }
-    **/
+    return super.onOptionsItemSelected(item);
+    }
+     **/
 }

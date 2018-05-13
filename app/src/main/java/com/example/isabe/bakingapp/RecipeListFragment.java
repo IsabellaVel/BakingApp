@@ -1,17 +1,16 @@
 package com.example.isabe.bakingapp;
 
-import android.support.v4.app.LoaderManager;
-import android.support.v4.app.LoaderManager.LoaderCallbacks;
+import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.LoaderManager;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.GridView;
 
 import com.example.isabe.bakingapp.adapters.RecipeListAdapter;
 import com.example.isabe.bakingapp.loaders.RecipeLoader;
@@ -19,7 +18,6 @@ import com.example.isabe.bakingapp.objects.RecipeContent;
 import com.example.isabe.bakingapp.utilities.NetworkUtils;
 
 import java.net.URL;
-import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.BindInt;
@@ -85,8 +83,26 @@ public class RecipeListFragment extends Fragment implements LoaderManager.Loader
         mRecipeListRv.setHasFixedSize(true);
         mRecipeListRv.setAdapter(mRecipeAdapter);
 
+        mRecipeListRv.addOnItemTouchListener(new RecyclerTouchListener(getContext(), mRecipeListRv,
+                new RecyclerTouchListener.RecipeOnClickListener() {
+                    @Override
+                    public void onClick(View view, int position) {
+                        //TODO
+                        RecipeContent thisRecipe = mRecipeAdapter.getItem(position);
+                        assert thisRecipe != null;
+                        List thisRecipeBakingSteps = thisRecipe.getBakingSteps();
+                        List thisRecipeIngredients = thisRecipe.getIngredients();
+                        String thisRecipeId = thisRecipe.getId();
+                        int thisRecipeServings = thisRecipe.getmServings();
+
+                        Intent showDetailsRecipe = new Intent(getActivity(), RecipeDetailActivity.class);
+                        showDetailsRecipe.putExtra("this_recipe", thisRecipe);
+                        startActivity(showDetailsRecipe);
+                    }
+                }));
+
         //setup the adapter
-      //  mRecipeAdapter.clear();
+        //  mRecipeAdapter.clear();
         if (dataRecipe != null && !dataRecipe.isEmpty()) {
             mRecipeAdapter.addAll(dataRecipe);
             Log.e(LOG_TAG, "Successful LoadFinished for List of Recipes.");
