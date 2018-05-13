@@ -84,7 +84,7 @@ public class RecipeListFragment extends Fragment implements LoaderManager.Loader
         mRecipeListRv.setAdapter(mRecipeAdapter);
 
         mRecipeListRv.addOnItemTouchListener(new RecyclerTouchListener(getContext(), mRecipeListRv,
-                new RecyclerTouchListener.RecipeOnClickListener() {
+                new RecyclerTouchListener.ItemClickListener() {
                     @Override
                     public void onClick(View view, int position) {
                         //TODO
@@ -92,12 +92,14 @@ public class RecipeListFragment extends Fragment implements LoaderManager.Loader
                         assert thisRecipe != null;
                         List thisRecipeBakingSteps = thisRecipe.getBakingSteps();
                         List thisRecipeIngredients = thisRecipe.getIngredients();
-                        String thisRecipeId = thisRecipe.getId();
+                        int thisRecipeId = thisRecipe.getId();
                         int thisRecipeServings = thisRecipe.getmServings();
 
-                        Intent showDetailsRecipe = new Intent(getActivity(), RecipeDetailActivity.class);
-                        showDetailsRecipe.putExtra("this_recipe", thisRecipe);
-                        startActivity(showDetailsRecipe);
+                        Intent showDetailsRecipe = new Intent(getActivity().getBaseContext(), RecipeDetailActivity.class);
+                        Bundle bundle = new Bundle();
+                        bundle.putParcelable("this_recipe", thisRecipe);
+                        showDetailsRecipe.putExtras(bundle);
+                        getActivity().startActivity(showDetailsRecipe);
                     }
                 }));
 

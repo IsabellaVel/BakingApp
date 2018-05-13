@@ -15,10 +15,10 @@ import java.util.Map;
  * TODO: Replace all uses of this class before publishing your app.
  */
 public class RecipeContent implements Parcelable {
-    public String id;
+    public int id;
     public String recipeName;
-    public List<Ingredient> ingredients;
-    public List<BakingStep> bakingSteps;
+    public List<Ingredient> ingredients = new ArrayList<Ingredient>();
+    public List<BakingStep> bakingSteps = new ArrayList<BakingStep>();
     public int mServings = 0;
     public String recipeImage;
     private Parcelable ingredsParcelable;
@@ -32,7 +32,7 @@ public class RecipeContent implements Parcelable {
      */
     public static final Map<String, RecipeItem> RECIPE_MAP = new HashMap<String, RecipeItem>();
 
-    public RecipeContent(String id, String recipeName, List<Ingredient> ingredients,
+    public RecipeContent(int id, String recipeName, List<Ingredient> ingredients,
                          List<BakingStep> bakingSteps, String recipeImage) {
         this.id = id;
         this.recipeName = recipeName;
@@ -42,18 +42,14 @@ public class RecipeContent implements Parcelable {
     }
 
     public RecipeContent(Parcel in) {
-        ingredsParcelable = in.readParcelable(Ingredient.class.getClassLoader());
-        stepsParcelable = in.readParcelable(BakingStep.class.getClassLoader());
-
-        id = in.readString();
+        id = in.readInt();
         recipeName = in.readString();
         ingredients = in.readParcelable(Ingredient.class.getClassLoader());
         bakingSteps = in.readParcelable(BakingStep.class.getClassLoader());
-        mServings = in.readInt();
         recipeImage = in.readString();
     }
 
-    public static final Creator<RecipeContent> CREATOR = new Parcelable.Creator<RecipeContent>() {
+    public static final Parcelable.Creator<RecipeContent> CREATOR = new Parcelable.Creator<RecipeContent>() {
         @Override
         public RecipeContent createFromParcel(Parcel in) {
             return new RecipeContent(in);
@@ -64,11 +60,6 @@ public class RecipeContent implements Parcelable {
             return new RecipeContent[size];
         }
     };
-
-    private static void addRecipe(RecipeItem item) {
-        ITEMS.add(item);
-        RECIPE_MAP.put(item.id, item);
-    }
 
     /**
      * private static RecipeItem createRecipeItem(int position) {
@@ -91,7 +82,7 @@ public class RecipeContent implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
-        dest.writeString(id);
+        dest.writeInt(id);
         dest.writeString(recipeName);
         dest.writeParcelable(ingredsParcelable, flags);
         dest.writeParcelable(stepsParcelable, flags);
@@ -103,14 +94,14 @@ public class RecipeContent implements Parcelable {
      * A dummy item representing a piece of recipeName.
      */
     public static class RecipeItem {
-        public final String id;
+        public final int id;
         public final String recipeName;
         public final List<Ingredient> ingredients;
         public final List<BakingStep> bakingSteps;
         public final int mServings = 0;
         public final String recipeImage;
 
-        public RecipeItem(String id, String recipeName, List<Ingredient> ingredients, List<BakingStep> bakingSteps, String image) {
+        public RecipeItem(int id, String recipeName, List<Ingredient> ingredients, List<BakingStep> bakingSteps, String image) {
             this.id = id;
             this.recipeName = recipeName;
             this.ingredients = ingredients;
@@ -124,7 +115,7 @@ public class RecipeContent implements Parcelable {
         }
     }
 
-    public String getId() {
+    public int getId() {
         return id;
     }
 

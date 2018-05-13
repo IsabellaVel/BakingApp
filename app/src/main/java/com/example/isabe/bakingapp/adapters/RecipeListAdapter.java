@@ -141,7 +141,7 @@ public class RecipeListAdapter extends RecyclerView.Adapter<RecipeListAdapter.Vi
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
         final RecipeContent recipe = recipesList.get(position);
-        final int currentId = Integer.parseInt(recipe.getId());
+        final int currentId = recipe.getId();
 
         final String imagePath = recipe.getRecipeImage();
         if (imagePath.isEmpty()) {

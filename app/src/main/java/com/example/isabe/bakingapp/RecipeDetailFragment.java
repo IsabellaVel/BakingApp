@@ -1,14 +1,13 @@
 package com.example.isabe.bakingapp;
 
 import android.app.Activity;
+import android.net.Uri;
+import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.v4.app.LoaderManager;
-import android.content.Loader;
-import android.net.Uri;
 import android.support.design.widget.CollapsingToolbarLayout;
-import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.LoaderManager;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -21,6 +20,7 @@ import android.widget.TextView;
 import com.example.isabe.bakingapp.adapters.RecipeStepsAdapter;
 import com.example.isabe.bakingapp.loaders.StepsLoader;
 import com.example.isabe.bakingapp.objects.BakingStep;
+import com.example.isabe.bakingapp.objects.RecipeContent;
 import com.example.isabe.bakingapp.utilities.NetworkUtils;
 
 import java.net.URL;
@@ -98,6 +98,8 @@ public class RecipeDetailFragment extends Fragment implements LoaderManager.Load
 
         View rootView = inflater.inflate(R.layout.fragment_recipe_details, container, false);
         unbinder = ButterKnife.bind(this, rootView);
+
+        RecipeContent recipeContent = getArguments().getParcelable("this_recipe");
 
         recipeStepsAdapter = new RecipeStepsAdapter(getActivity(), mBakingSteps, onStepClickListener);
 

@@ -2,7 +2,6 @@ package com.example.isabe.bakingapp.utilities;
 
 import android.text.TextUtils;
 import android.util.Log;
-import android.util.StateSet;
 
 import com.example.isabe.bakingapp.objects.BakingStep;
 import com.example.isabe.bakingapp.objects.Ingredient;
@@ -14,7 +13,6 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.SimpleTimeZone;
 
 /**
  * Created by isabe on 5/5/2018.
@@ -52,7 +50,7 @@ public class RecipeDbJSONUtils {
 
             for (int i = 0; i < recipesJSONArray.length(); i++) {
                 JSONObject currentRecipe = recipesJSONArray.getJSONObject(i);
-                String id = currentRecipe.optString(RECIPE_ID);
+                int id = currentRecipe.optInt(RECIPE_ID);
                 String name = currentRecipe.optString(RECIPE_NAME);
                 String servings = currentRecipe.optString(RECIPE_SERVINGS);
                 String image = currentRecipe.optString(RECIPE_IMAGE);

@@ -1,12 +1,12 @@
 package com.example.isabe.bakingapp;
 
 import android.content.Context;
-import android.content.Intent;
 import android.os.Bundle;
+import android.os.Parcelable;
+import android.support.v7.app.ActionBar;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.app.ActionBar;
 import android.widget.TextView;
 
 import com.example.isabe.bakingapp.objects.RecipeContent;
@@ -27,12 +27,13 @@ public class RecipeDetailActivity extends AppCompatActivity {
     boolean mTwoPane;
     @BindView(R.id.ingreds_details)
     TextView mTvIngreds;
-    private RecipeContent mRecipeDetails;
+    public RecipeContent mRecipeDetails;
 
-    public static Intent sendData(Context context, int recipeId) {
-        Intent intent = new Intent(context, RecipeDetailActivity.class);
-        intent.putExtra(RECIPE_ID_EXTRA_FIELD, recipeId);
-        return intent;
+    public void sendData(Context context, Parcelable recipeId) {
+        Bundle bundle = new Bundle();
+        bundle.putParcelable("this_recipe", mRecipeDetails);
+        RecipeDetailFragment recipeDetailFragment = new RecipeDetailFragment();
+        recipeDetailFragment.setArguments(bundle);
     }
 
     @Override
@@ -51,12 +52,12 @@ public class RecipeDetailActivity extends AppCompatActivity {
         if (savedInstanceState != null) {
             mRecipeDetails = savedInstanceState.getParcelable("this_recipe");
         }
-
-         mRecipeDetails = getIntent().getExtras().getParcelable("this_recipe");
+        Bundle bundle = getIntent().getExtras();
+        mRecipeDetails = bundle.getParcelable("this_recipe");
 
         // Create the detail fragment and add it to the activity
         // using a fragment transaction.
-        int recipeId = getIntent().getIntExtra(RECIPE_ID_EXTRA_FIELD, DEFAULT_VALUE);
+        int recipeId = getIntent().getIntExtra(RECIPE_ID_EXTRA_FIELD, clickedId);
 
 
         RecipeDetailFragment recipeDetailFragment = RecipeDetailFragment.newInstance(recipeId);

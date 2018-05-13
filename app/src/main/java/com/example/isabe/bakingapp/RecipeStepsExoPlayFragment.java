@@ -75,7 +75,7 @@ public class RecipeStepsExoPlayFragment extends Fragment implements Player.Event
 
     Unbinder unbinder;
 
-    public static RecipeStepsExoPlayFragment newInstance(String stepDescription, String videoUrl, String imageUrl) {
+    public RecipeStepsExoPlayFragment newInstance(String stepDescription, String videoUrl, String imageUrl) {
         Bundle args = new Bundle();
         args.putString(EXTRA_DESCR_ID, stepDescription);
         args.putString(EXTRA_VIDEO_ID, videoUrl);
