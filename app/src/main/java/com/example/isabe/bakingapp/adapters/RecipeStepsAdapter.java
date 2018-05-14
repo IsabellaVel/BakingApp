@@ -82,6 +82,12 @@ public class RecipeStepsAdapter extends RecyclerView.Adapter<RecipeStepsAdapter.
         return stepList.size();
     }
 
+    public BakingStep getItem(int position) {
+        return stepList.get(position);
+
+    }
+
+
     public void clear() {
         stepList.clear();
     }

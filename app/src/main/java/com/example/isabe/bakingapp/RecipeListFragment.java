@@ -91,10 +91,11 @@ public class RecipeListFragment extends Fragment implements LoaderManager.Loader
                         //TODO
                         RecipeContent thisRecipe = mRecipeAdapter.getItem(position);
                         assert thisRecipe != null;
-                        List thisRecipeBakingSteps = thisRecipe.getBakingSteps();
-                        List thisRecipeIngredients = thisRecipe.getIngredients();
                         int thisRecipeId = thisRecipe.getId();
-                        int thisRecipeServings = thisRecipe.getmServings();
+                        String thisRecipeName = thisRecipe.getRecipeName();
+                        List thisRecipeIngredients = thisRecipe.getIngredients();
+                        List thisRecipeBakingSteps = thisRecipe.getBakingSteps();
+                        String thisRecipeImage = thisRecipe.getRecipeImage();
 
                         Intent showDetailsRecipe = new Intent(getActivity().getBaseContext(), RecipeDetailActivity.class);
                         showDetailsRecipe.putExtra(RECIPE_SELECTION, thisRecipe);

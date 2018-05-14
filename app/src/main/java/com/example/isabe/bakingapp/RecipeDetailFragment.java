@@ -1,13 +1,10 @@
 package com.example.isabe.bakingapp;
 
 import android.app.Activity;
-import android.net.Uri;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.LoaderManager;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -17,13 +14,11 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import com.example.isabe.bakingapp.adapters.RecipeListAdapter;
 import com.example.isabe.bakingapp.adapters.RecipeStepsAdapter;
-import com.example.isabe.bakingapp.loaders.StepsLoader;
 import com.example.isabe.bakingapp.objects.BakingStep;
 import com.example.isabe.bakingapp.objects.RecipeContent;
-import com.example.isabe.bakingapp.utilities.NetworkUtils;
 
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -31,21 +26,22 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
 
+import static com.example.isabe.bakingapp.RecipeListFragment.RECIPE_SELECTION;
+
 /**
  * A fragment representing a single Recipe detail screen.
  * This fragment is either contained in a {@link RecipeListActivity}
  * in two-pane mode (on tablets) or a {@link RecipeDetailActivity}
  * on handsets.
  */
-public class RecipeDetailFragment extends Fragment implements LoaderManager.LoaderCallbacks<List<BakingStep>> {
-    private static final int LOADER_ID = 1;
+public class RecipeDetailFragment extends Fragment {
     private static final String LOG_TAG = RecipeDetailFragment.class.getSimpleName();
     private Unbinder unbinder;
+    public static final String STEP_SELECTION = "STEP_ID";
 
     private RecipeStepsAdapter recipeStepsAdapter;
+    private RecipeListAdapter mRecipeAdapter;
     private List<BakingStep> mBakingSteps = new ArrayList<>();
-    public static final String RECIPE_JSON_URI =
-            "https://d17h27t6h515a5.cloudfront.net/topher/2017/May/59121517_baking/baking.json";
 
     private RecipeStepsAdapter.OnStepClickListener onStepClickListener;
     @BindView(R.id.ingreds_details)
@@ -58,10 +54,11 @@ public class RecipeDetailFragment extends Fragment implements LoaderManager.Load
     private int recipeNo;
 
     public static RecipeDetailFragment newInstance(int recipeNo) {
-        Bundle arguments = new Bundle();
-        arguments.putInt(RecipeDetailActivity.RECIPE_ID_EXTRA_FIELD, recipeNo);
         RecipeDetailFragment recipeDetailFragment = new RecipeDetailFragment();
-        recipeDetailFragment.setArguments(arguments);
+
+        Bundle bundle = new Bundle();
+        bundle.putInt(RecipeListFragment.RECIPE_SELECTION, recipeNo);
+        recipeDetailFragment.setArguments(bundle);
         return recipeDetailFragment;
     }
 
@@ -81,7 +78,13 @@ public class RecipeDetailFragment extends Fragment implements LoaderManager.Load
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        recipeNo = getArguments() != null ? getArguments().getInt(RecipeDetailActivity.RECIPE_ID_EXTRA_FIELD) : 1;
+        Bundle args = getArguments();
+        if (args != null) {
+            RecipeContent recipeContent = args.getParcelable(RECIPE_SELECTION);
+            recipeNo = recipeContent.getId();
+            mBakingSteps = recipeContent.getBakingSteps();
+        }
+
 
         Activity activity = this.getActivity();
         CollapsingToolbarLayout appBarLayout = (CollapsingToolbarLayout) activity.findViewById(R.id.toolbar_layout);
@@ -99,13 +102,53 @@ public class RecipeDetailFragment extends Fragment implements LoaderManager.Load
         View rootView = inflater.inflate(R.layout.fragment_recipe_details, container, false);
         unbinder = ButterKnife.bind(this, rootView);
 
-        RecipeContent recipeContent = getArguments().getParcelable(RecipeListFragment.RECIPE_SELECTION);
 
         recipeStepsAdapter = new RecipeStepsAdapter(getActivity(), mBakingSteps, onStepClickListener);
 
-        android.support.v4.app.LoaderManager loaderManager = getLoaderManager();
-        loaderManager.initLoader(LOADER_ID, null, this);
+        LinearLayoutManager layoutManager = new LinearLayoutManager(getContext());
+        mRecipeStepsRecyclerView.setLayoutManager(layoutManager);
+
+        recipeStepsAdapter.setHasStableIds(true);
+        mRecipeStepsRecyclerView.setHasFixedSize(true);
+        mRecipeStepsRecyclerView.setAdapter(recipeStepsAdapter);
+
+        mRecipeStepsRecyclerView.addItemDecoration(new DividerItemDecoration(getContext(),
+                DividerItemDecoration.VERTICAL));
+
+        setUpRecyclerListener(mRecipeStepsRecyclerView);
+
+        if (mBakingSteps != null && !mBakingSteps.isEmpty()) {
+            recipeStepsAdapter.addAll(mBakingSteps);
+            Log.e(LOG_TAG, "Successful LoadFinished for List of Steps per Recipe.");
+
+        }
+
         return rootView;
+    }
+
+    public void setUpRecyclerListener(RecyclerView recyclerListener) {
+        mRecipeStepsRecyclerView = recyclerListener;
+
+        mRecipeStepsRecyclerView.addOnItemTouchListener(new RecyclerTouchListener(getContext(), mRecipeStepsRecyclerView,
+                new RecyclerTouchListener.ItemClickListener() {
+                    @Override
+                    public void onClick(View view, int position) {
+                        //TODO
+                        BakingStep thisRecipeStep = recipeStepsAdapter.getItem(position);
+                        assert thisRecipeStep != null;
+                        int thisRecipeId = thisRecipeStep.getId();
+                        String thisStepShortDesc = thisRecipeStep.getBriefStepDescription();
+                        String thisStepLongDesc = thisRecipeStep.getLongStepDescription();
+                        String thisStepVideoUrl = thisRecipeStep.getVideoUrl();
+                        String thisStepImageUrl = thisRecipeStep.thumbnailStepUrl;
+
+                        Fragment exoPlayerFragment = new RecipeStepsExoPlayFragment();
+                        Bundle bundle = new Bundle();
+                        bundle.putParcelable(STEP_SELECTION, thisRecipeStep);
+                        exoPlayerFragment.setArguments(bundle);
+                    }
+                }));
+
     }
 
     @Override
@@ -114,36 +157,7 @@ public class RecipeDetailFragment extends Fragment implements LoaderManager.Load
         unbinder.unbind();
     }
 
-    @Override
-    public android.support.v4.content.Loader<List<BakingStep>> onCreateLoader(int id, Bundle args) {
-        Uri stepsUri = Uri.parse(RECIPE_JSON_URI).buildUpon().build();
-        URL stepsURL = NetworkUtils.createUrl((stepsUri).toString());
-        return new StepsLoader(getActivity(), (stepsURL).toString());
-    }
-
-    @Override
-    public void onLoadFinished(@NonNull android.support.v4.content.Loader<List<BakingStep>> loader, List<BakingStep> dataSteps) {
-        LinearLayoutManager layoutManager = new LinearLayoutManager(getContext());
-        mRecipeStepsRecyclerView.setLayoutManager(layoutManager);
-
-        recipeStepsAdapter = new RecipeStepsAdapter(getActivity(), dataSteps, onStepClickListener);
-        recipeStepsAdapter.setHasStableIds(true);
-        mRecipeStepsRecyclerView.setHasFixedSize(true);
-        mRecipeStepsRecyclerView.setAdapter(recipeStepsAdapter);
-
-        mRecipeStepsRecyclerView.addItemDecoration(new DividerItemDecoration(getContext(),
-                DividerItemDecoration.VERTICAL));
-
-        if (dataSteps != null && !dataSteps.isEmpty()) {
-            recipeStepsAdapter.addAll(dataSteps);
-            Log.e(LOG_TAG, "Successful LoadFinished for List of Steps per Recipe.");
-
-        }
-    }
-
-    @Override
-    public void onLoaderReset(@NonNull android.support.v4.content.Loader<List<BakingStep>> loader) {
-        recipeStepsAdapter.clear();
-    }
-
 }
+
+
+

@@ -67,6 +67,11 @@ public class RecipeStepsExoPlayFragment extends Fragment implements Player.Event
     private static final String EXTRA_DESCR_ID = "EXTRA_ID";
     private static final String EXTRA_VIDEO_ID = "VIDEO_ID";
     private static final String EXTRA_IMAGE_ID = "IMAGE_ID";
+    private String stepDescription;
+    private String stepVideoUrl;
+    private String stepImageUrl;
+    private String stepLongDesc;
+
     private static final long MAX_POSITION_FOR_SEEK_TO_PREVIOUS = 3000;
     private boolean mTwoPane;
     private MediaSessionCompat mMediaSession;
@@ -88,6 +93,20 @@ public class RecipeStepsExoPlayFragment extends Fragment implements Player.Event
     public RecipeStepsExoPlayFragment() {
     }
 
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
+        if (getArguments() != null) {
+            BakingStep stepsList = getArguments().getParcelable(RecipeDetailFragment.STEP_SELECTION);
+            stepDescription = stepsList.getBriefStepDescription();
+            stepLongDesc = stepsList.getLongStepDescription();
+            stepVideoUrl = stepsList.getVideoUrl();
+            stepImageUrl = stepsList.getThumbnailStepUrl();
+        }
+    }
+
+
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_step_details, container, false);
@@ -99,18 +118,15 @@ public class RecipeStepsExoPlayFragment extends Fragment implements Player.Event
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        String stepDescription = getArguments().getString(EXTRA_DESCR_ID);
         mDetailedInstructions.setText(stepDescription);
 
-        String imageUrl = getArguments().getString(EXTRA_IMAGE_ID);
-        if (imageUrl == null && !imageUrl.isEmpty()) {
+        if (stepImageUrl != null && !stepImageUrl.isEmpty()) {
             mStepImage.setVisibility(View.GONE);
         }
-        String videoUrl = getArguments().getString(EXTRA_VIDEO_ID);
-        if (videoUrl != null && !videoUrl.isEmpty()) {
+        if (stepVideoUrl != null && !stepVideoUrl.isEmpty()) {
             mExoPlayerView.setVisibility(View.VISIBLE);
             initializeMediaSession();
-            initializePlayer(Uri.parse(videoUrl));
+            initializePlayer(Uri.parse(stepVideoUrl));
 
             int configOrientation = getResources().getConfiguration().orientation;
 

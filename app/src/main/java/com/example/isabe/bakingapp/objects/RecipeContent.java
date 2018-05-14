@@ -44,8 +44,8 @@ public class RecipeContent implements Parcelable {
     public RecipeContent(Parcel in) {
         id = in.readInt();
         recipeName = in.readString();
-        ingredients = in.readParcelable(Ingredient.class.getClassLoader());
-        bakingSteps = in.readParcelable(BakingStep.class.getClassLoader());
+        in.readList(ingredients, getClass().getClassLoader());
+        in.readList(bakingSteps, BakingStep.class.getClassLoader());
         recipeImage = in.readString();
     }
 
@@ -84,9 +84,8 @@ public class RecipeContent implements Parcelable {
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeInt(id);
         dest.writeString(recipeName);
-        dest.writeParcelable(ingredientItem, flags);
-        dest.writeParcelable(bakingStep, flags);
-        dest.writeInt(mServings);
+        dest.writeList(ingredients);
+        dest.writeList(bakingSteps);
         dest.writeString(recipeImage);
     }
 
@@ -98,7 +97,6 @@ public class RecipeContent implements Parcelable {
         public final String recipeName;
         public final List<Ingredient> ingredients;
         public final List<BakingStep> bakingSteps;
-        public final int mServings = 0;
         public final String recipeImage;
 
         public RecipeItem(int id, String recipeName, List<Ingredient> ingredients, List<BakingStep> bakingSteps, String image) {
@@ -138,4 +136,6 @@ public class RecipeContent implements Parcelable {
     public String getRecipeImage() {
         return recipeImage;
     }
+
+
 }
