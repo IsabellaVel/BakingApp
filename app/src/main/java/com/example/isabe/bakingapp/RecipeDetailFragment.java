@@ -99,7 +99,7 @@ public class RecipeDetailFragment extends Fragment implements LoaderManager.Load
         View rootView = inflater.inflate(R.layout.fragment_recipe_details, container, false);
         unbinder = ButterKnife.bind(this, rootView);
 
-        RecipeContent recipeContent = getArguments().getParcelable("this_recipe");
+        RecipeContent recipeContent = getArguments().getParcelable(RecipeListFragment.RECIPE_SELECTION);
 
         recipeStepsAdapter = new RecipeStepsAdapter(getActivity(), mBakingSteps, onStepClickListener);
 

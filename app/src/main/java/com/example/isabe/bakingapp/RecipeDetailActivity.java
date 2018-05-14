@@ -31,7 +31,7 @@ public class RecipeDetailActivity extends AppCompatActivity {
 
     public void sendData(Context context, Parcelable recipeId) {
         Bundle bundle = new Bundle();
-        bundle.putParcelable("this_recipe", mRecipeDetails);
+        bundle.putParcelable(RecipeListFragment.RECIPE_SELECTION, mRecipeDetails);
         RecipeDetailFragment recipeDetailFragment = new RecipeDetailFragment();
         recipeDetailFragment.setArguments(bundle);
     }
@@ -52,8 +52,7 @@ public class RecipeDetailActivity extends AppCompatActivity {
         if (savedInstanceState != null) {
             mRecipeDetails = savedInstanceState.getParcelable("this_recipe");
         }
-        Bundle bundle = getIntent().getExtras();
-        mRecipeDetails = bundle.getParcelable("this_recipe");
+        mRecipeDetails = getIntent().getParcelableExtra(RecipeListFragment.RECIPE_SELECTION);
 
         // Create the detail fragment and add it to the activity
         // using a fragment transaction.

@@ -33,6 +33,7 @@ public class RecipeListFragment extends Fragment implements LoaderManager.Loader
 
     public static final String RECIPE_JSON_URI =
             "https://d17h27t6h515a5.cloudfront.net/topher/2017/May/59121517_baking/baking.json";
+    public static final String RECIPE_SELECTION = "thisRecipe";
     private static final int LOADER_ID = 11;
     private static final String LOG_TAG = RecipeListFragment.class.getSimpleName();
     private RecipeListAdapter mRecipeAdapter;
@@ -96,9 +97,7 @@ public class RecipeListFragment extends Fragment implements LoaderManager.Loader
                         int thisRecipeServings = thisRecipe.getmServings();
 
                         Intent showDetailsRecipe = new Intent(getActivity().getBaseContext(), RecipeDetailActivity.class);
-                        Bundle bundle = new Bundle();
-                        bundle.putParcelable("this_recipe", thisRecipe);
-                        showDetailsRecipe.putExtras(bundle);
+                        showDetailsRecipe.putExtra(RECIPE_SELECTION, thisRecipe);
                         getActivity().startActivity(showDetailsRecipe);
                     }
                 }));

@@ -17,12 +17,12 @@ import java.util.Map;
 public class RecipeContent implements Parcelable {
     public int id;
     public String recipeName;
-    public List<Ingredient> ingredients = new ArrayList<Ingredient>();
-    public List<BakingStep> bakingSteps = new ArrayList<BakingStep>();
+    public List<Ingredient> ingredients = new ArrayList<>();
+    public List<BakingStep> bakingSteps = new ArrayList<>();
     public int mServings = 0;
     public String recipeImage;
-    private Parcelable ingredsParcelable;
-    private Parcelable stepsParcelable;
+    public Ingredient ingredientItem;
+    public BakingStep bakingStep;
     /**
      * An array of sample (dummy) items.
      */
@@ -84,8 +84,8 @@ public class RecipeContent implements Parcelable {
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeInt(id);
         dest.writeString(recipeName);
-        dest.writeParcelable(ingredsParcelable, flags);
-        dest.writeParcelable(stepsParcelable, flags);
+        dest.writeParcelable(ingredientItem, flags);
+        dest.writeParcelable(bakingStep, flags);
         dest.writeInt(mServings);
         dest.writeString(recipeImage);
     }
