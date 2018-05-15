@@ -120,23 +120,23 @@ public class RecipeStepsExoPlayFragment extends Fragment implements Player.Event
 
         mDetailedInstructions.setText(stepDescription);
 
-        if (stepImageUrl != null && !stepImageUrl.isEmpty()) {
+        if (stepImageUrl == null || stepImageUrl.isEmpty()) {
             mStepImage.setVisibility(View.GONE);
         }
         if (stepVideoUrl != null && !stepVideoUrl.isEmpty()) {
-            mExoPlayerView.setVisibility(View.VISIBLE);
+            mStepVideo.setVisibility(View.VISIBLE);
             initializeMediaSession();
             initializePlayer(Uri.parse(stepVideoUrl));
 
             int configOrientation = getResources().getConfiguration().orientation;
 
             if (configOrientation == Configuration.ORIENTATION_LANDSCAPE && !mTwoPane) {
-                expandVideoFullScreen(mExoPlayerView);
+                expandVideoFullScreen(mStepVideo);
                 mDetailedInstructions.setVisibility(View.GONE);
 
             }
         } else {
-            mExoPlayerView.setVisibility(View.GONE);
+            mStepVideo.setVisibility(View.GONE);
         }
     }
 
@@ -222,7 +222,7 @@ public class RecipeStepsExoPlayFragment extends Fragment implements Player.Event
         if (mExoPlayer == null) {
             TrackSelector trackSelector = new DefaultTrackSelector();
             mExoPlayer = ExoPlayerFactory.newSimpleInstance(getContext(), trackSelector);
-            mExoPlayerView.setPlayer(mExoPlayer);
+            mStepVideo.setPlayer(mExoPlayer);
             mExoPlayer.addListener(this);
 
             DefaultBandwidthMeter bandwidthMeter = new DefaultBandwidthMeter();

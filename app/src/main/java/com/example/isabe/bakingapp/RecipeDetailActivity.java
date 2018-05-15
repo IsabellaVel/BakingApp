@@ -41,6 +41,10 @@ public class RecipeDetailActivity extends AppCompatActivity {
         bundle.putParcelable(RecipeListFragment.RECIPE_SELECTION, mRecipeDetails);
         RecipeDetailFragment recipeDetailFragment = new RecipeDetailFragment();
         recipeDetailFragment.setArguments(bundle);
+
+        getSupportFragmentManager().beginTransaction()
+                .add(R.id.fragment_details_container, recipeDetailFragment)
+                .commit();
     }
 
     @Override
@@ -59,6 +63,7 @@ public class RecipeDetailActivity extends AppCompatActivity {
         if (savedInstanceState != null) {
             mRecipeDetails = savedInstanceState.getParcelable(RecipeListFragment.RECIPE_SELECTION);
         }
+
         mRecipeDetails = getIntent().getParcelableExtra(RecipeListFragment.RECIPE_SELECTION);
         int recipeId = mRecipeDetails.getId();
         String recipeName = mRecipeDetails.getRecipeName();
@@ -72,12 +77,6 @@ public class RecipeDetailActivity extends AppCompatActivity {
         recipeId = getIntent().getIntExtra(RECIPE_ID_EXTRA_FIELD, recipeId);
 
 
-        RecipeDetailFragment recipeDetailFragment = RecipeDetailFragment.newInstance(recipeId);
-        getSupportFragmentManager().beginTransaction()
-                .add(R.id.fragment_details_container, recipeDetailFragment)
-                .commit();
-
-
         // TODO check if this would be the proper view from the layout. Otherwise, create a separate layout file.
         if (findViewById(R.id.recipe_detail_container) != null) {
             // The detail container view will be present only in the
@@ -85,11 +84,12 @@ public class RecipeDetailActivity extends AppCompatActivity {
             // If this view is present, then the
             // activity should be in two-pane mode.
             mTwoPane = true;
-            recipeDetailFragment = new RecipeDetailFragment();
-            getSupportFragmentManager().beginTransaction()
-                    .add(R.id.fragment_details_container, recipeDetailFragment)
-                    .commit();
-
+            sendData(mContext, mRecipeDetails);
+            /**  RecipeDetailFragment recipeDetailFragment = new RecipeDetailFragment();
+             getSupportFragmentManager().beginTransaction()
+             .add(R.id.fragment_details_container, recipeDetailFragment)
+             .commit();
+             **/
             // TODO Add fragment for Video and steps instructions
             RecipeStepsExoPlayFragment recipeStepsFragment = new RecipeStepsExoPlayFragment();
             getSupportFragmentManager().beginTransaction()

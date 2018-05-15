@@ -11,6 +11,7 @@ import android.widget.TextView;
 import com.example.isabe.bakingapp.R;
 import com.example.isabe.bakingapp.RecipeStepActivity;
 import com.example.isabe.bakingapp.objects.BakingStep;
+import com.example.isabe.bakingapp.objects.RecipeContent;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -25,8 +26,11 @@ import butterknife.ButterKnife;
 public class RecipeStepsAdapter extends RecyclerView.Adapter<RecipeStepsAdapter.ViewHolder> {
     private List<BakingStep> stepList = new ArrayList<>();
     public final OnStepClickListener onStepClickListener;
-    private int currentPosition;
+    private int adapterPosition;
+    private static int DEFAULT_STEP_POSITION = 0;
     private Context mContext;
+    private RecipeContent recipeItem;
+    private BakingStep stepItem;
 
     @BindView(R.id.list_step_name)
     TextView mStepName;
@@ -53,11 +57,11 @@ public class RecipeStepsAdapter extends RecyclerView.Adapter<RecipeStepsAdapter.
 
         @Override
         public void onClick(View view) {
-            int adapterPosition = getAdapterPosition();
+            adapterPosition = getAdapterPosition();
             onStepClickListener.onClick(adapterPosition);
 
             Intent intent = new Intent(view.getContext(), RecipeStepActivity.class);
-            intent.putExtra("step_id", currentPosition);
+            intent.putExtra("step_id", adapterPosition);
             view.getContext().startActivity(intent);
             notifyDataSetChanged();
         }
@@ -73,7 +77,7 @@ public class RecipeStepsAdapter extends RecyclerView.Adapter<RecipeStepsAdapter.
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
         final BakingStep bakingStep = stepList.get(position);
-        currentPosition = bakingStep.getId();
+        adapterPosition = bakingStep.getId();
         holder.mStepName.setText(bakingStep.getBriefStepDescription());
     }
 
