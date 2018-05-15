@@ -42,7 +42,7 @@ public class RecipeListFragment extends Fragment implements LoaderManager.Loader
     RecyclerView mRecipeListRv;
 
     private List<RecipeContent> mRecipeList;
-    private RecipeListAdapter.RecipeOnClickListener mRecipeOnClickListener;
+    private RecyclerTouchListener.ItemClickListener recyclerTouchListener;
     @BindInt(R.integer.grid_column_number)
     int gridColNo;
 
@@ -79,7 +79,8 @@ public class RecipeListFragment extends Fragment implements LoaderManager.Loader
         //setup the recyclerView
         mRecipeListRv.setLayoutManager(new GridLayoutManager(getContext(), gridColNo));
 
-        mRecipeAdapter = new RecipeListAdapter(getActivity(), dataRecipe, mRecipeOnClickListener);
+        mRecipeAdapter = new RecipeListAdapter(getActivity(), dataRecipe,
+                (RecyclerTouchListener.ItemClickListener) recyclerTouchListener);
         mRecipeAdapter.setHasStableIds(true);
         mRecipeListRv.setHasFixedSize(true);
         mRecipeListRv.setAdapter(mRecipeAdapter);
@@ -101,6 +102,7 @@ public class RecipeListFragment extends Fragment implements LoaderManager.Loader
                         showDetailsRecipe.putExtra(RECIPE_SELECTION, thisRecipe);
                         getActivity().startActivity(showDetailsRecipe);
                     }
+
                 }));
 
         //setup the adapter

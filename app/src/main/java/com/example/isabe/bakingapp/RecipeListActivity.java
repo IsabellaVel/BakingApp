@@ -1,26 +1,18 @@
 package com.example.isabe.bakingapp;
 
-import android.app.FragmentManager;
-import android.app.FragmentTransaction;
-import android.content.Context;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
-import android.view.View;
 
-
-import com.example.isabe.bakingapp.adapters.RecipeListAdapter;
-//import com.example.isabe.bakingapp.adapters.RecipeListAdapterDefaultGenerated;
 import com.example.isabe.bakingapp.objects.RecipeContent;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.BindView;
+
+//import com.example.isabe.bakingapp.adapters.RecipeListAdapterDefaultGenerated;
 
 /**
  * An activity representing a list of Recipes. This activity
@@ -38,7 +30,6 @@ public class RecipeListActivity extends AppCompatActivity {
      */
     private boolean mTwoPane;
     private List<RecipeContent> mRecipesList = new ArrayList<>();
-    private RecipeListAdapter.RecipeOnClickListener mRecipeOnClickListener;
 
     @BindView(R.id.recipes_list_rv)
     RecyclerView mRecipesRv;

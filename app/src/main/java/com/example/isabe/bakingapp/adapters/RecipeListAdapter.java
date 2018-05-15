@@ -14,6 +14,7 @@ import android.widget.TextView;
 import com.example.isabe.bakingapp.R;
 import com.example.isabe.bakingapp.RecipeDetailActivity;
 import com.example.isabe.bakingapp.RecipeDetailFragment;
+import com.example.isabe.bakingapp.RecyclerTouchListener;
 import com.example.isabe.bakingapp.objects.RecipeContent;
 import com.squareup.picasso.Picasso;
 
@@ -27,10 +28,11 @@ import butterknife.ButterKnife;
  * Created by isabe on 5/6/2018.
  */
 
-public class RecipeListAdapter extends RecyclerView.Adapter<RecipeListAdapter.ViewHolder> implements RecyclerView.OnItemTouchListener {
+public class RecipeListAdapter extends RecyclerView.Adapter<RecipeListAdapter.ViewHolder>
+        implements RecyclerView.OnItemTouchListener {
 
     public List<RecipeContent> recipesList = new ArrayList<>();
-    private final RecipeOnClickListener recipesOnClickListener;
+    private RecyclerTouchListener.ItemClickListener recyclerTouchListener;
     @BindView(R.id.recipeNameListEntry)
     public TextView mTvRecipeName;
 
@@ -44,8 +46,8 @@ public class RecipeListAdapter extends RecyclerView.Adapter<RecipeListAdapter.Vi
     @Override
     public boolean onInterceptTouchEvent(RecyclerView rv, MotionEvent e) {
         View child = rv.findChildViewUnder(e.getX(), e.getY());
-        if (child != null && recipesOnClickListener != null && gestureDetector.onTouchEvent(e)) {
-            recipesOnClickListener.onClick(child, rv.getChildAdapterPosition(child));
+        if (child != null && recyclerTouchListener != null && gestureDetector.onTouchEvent(e)) {
+            recyclerTouchListener.onClick(child, rv.getChildAdapterPosition(child));
         }
         return false;
     }
@@ -60,14 +62,11 @@ public class RecipeListAdapter extends RecyclerView.Adapter<RecipeListAdapter.Vi
 
     }
 
-    public interface RecipeOnClickListener {
-        void onClick(View view, int itemId);
-    }
-
-    public RecipeListAdapter(Context context, List<RecipeContent> recipeContents, RecipeOnClickListener listener) {
+    public RecipeListAdapter(Context context, List<RecipeContent> recipeContents,
+                             RecyclerTouchListener.ItemClickListener listener) {
         mContext = context;
         recipesList = recipeContents;
-        recipesOnClickListener = listener;
+        recyclerTouchListener = listener;
         gestureDetector = new GestureDetector(context, new GestureDetector.OnGestureListener() {
             @Override
             public boolean onDown(MotionEvent e) {
@@ -119,14 +118,13 @@ public class RecipeListAdapter extends RecyclerView.Adapter<RecipeListAdapter.Vi
 
         @Override
         public void onClick(View view) {
-            if (recipesOnClickListener != null) {
-                recipesOnClickListener.onClick(view, getAdapterPosition());
-                int adapterId = getAdapterPosition();
+            if (recyclerTouchListener != null) {
+                recyclerTouchListener.onClick(view, this.getLayoutPosition());
+
+                int itemId = this.getLayoutPosition();
                 Intent intent = new Intent(view.getContext(), RecipeDetailFragment.class);
-                intent.putExtra("recipe_id", adapterId);
+                intent.putExtra("recipe_id", itemId);
             }
-            //     int adapterId = getAdapterPosition();
-            //   recipesOnClickListener.onClick(adapterId);
         }
     }
 

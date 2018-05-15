@@ -64,17 +64,19 @@ public class RecipeDetailActivity extends AppCompatActivity {
             mRecipeDetails = savedInstanceState.getParcelable(RecipeListFragment.RECIPE_SELECTION);
         }
 
-        mRecipeDetails = getIntent().getParcelableExtra(RecipeListFragment.RECIPE_SELECTION);
-        int recipeId = mRecipeDetails.getId();
-        String recipeName = mRecipeDetails.getRecipeName();
-        List<Ingredient> thisRecipeIngreds = mRecipeDetails.getIngredients();
-        List<BakingStep> thisRecipeSteps = mRecipeDetails.getBakingSteps();
-        String thisRecipeImage = mRecipeDetails.getRecipeImage();
+            mRecipeDetails = getIntent().getParcelableExtra(RecipeListFragment.RECIPE_SELECTION);
+            int recipeId = mRecipeDetails.getId();
+            String recipeName = mRecipeDetails.getRecipeName();
+            List<Ingredient> thisRecipeIngreds = mRecipeDetails.getIngredients();
+            List<BakingStep> thisRecipeSteps = mRecipeDetails.getBakingSteps();
+            String thisRecipeImage = mRecipeDetails.getRecipeImage();
 
-        sendData(mContext, mRecipeDetails);
+            recipeId = getIntent().getIntExtra(RECIPE_ID_EXTRA_FIELD, recipeId);
+
+        sendData(getBaseContext(), mRecipeDetails);
         // Create the detail fragment and add it to the activity
         // using a fragment transaction.
-        recipeId = getIntent().getIntExtra(RECIPE_ID_EXTRA_FIELD, recipeId);
+
 
 
         // TODO check if this would be the proper view from the layout. Otherwise, create a separate layout file.
