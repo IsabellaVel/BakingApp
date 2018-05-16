@@ -12,9 +12,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.example.isabe.bakingapp.R;
-import com.example.isabe.bakingapp.RecipeDetailActivity;
 import com.example.isabe.bakingapp.RecipeDetailFragment;
-import com.example.isabe.bakingapp.RecyclerTouchListener;
 import com.example.isabe.bakingapp.objects.RecipeContent;
 import com.squareup.picasso.Picasso;
 
@@ -32,7 +30,7 @@ public class RecipeListAdapter extends RecyclerView.Adapter<RecipeListAdapter.Vi
         implements RecyclerView.OnItemTouchListener {
 
     public List<RecipeContent> recipesList = new ArrayList<>();
-    private RecyclerTouchListener.ItemClickListener recyclerTouchListener;
+    private RecyclerTouchListener.ItemClickListener mRecyclerTouchListener;
     @BindView(R.id.recipeNameListEntry)
     public TextView mTvRecipeName;
 
@@ -46,8 +44,8 @@ public class RecipeListAdapter extends RecyclerView.Adapter<RecipeListAdapter.Vi
     @Override
     public boolean onInterceptTouchEvent(RecyclerView rv, MotionEvent e) {
         View child = rv.findChildViewUnder(e.getX(), e.getY());
-        if (child != null && recyclerTouchListener != null && gestureDetector.onTouchEvent(e)) {
-            recyclerTouchListener.onClick(child, rv.getChildAdapterPosition(child));
+        if (child != null && mRecyclerTouchListener != null && gestureDetector.onTouchEvent(e)) {
+            mRecyclerTouchListener.onClick(child, rv.getChildAdapterPosition(child));
         }
         return false;
     }
@@ -66,7 +64,7 @@ public class RecipeListAdapter extends RecyclerView.Adapter<RecipeListAdapter.Vi
                              RecyclerTouchListener.ItemClickListener listener) {
         mContext = context;
         recipesList = recipeContents;
-        recyclerTouchListener = listener;
+        mRecyclerTouchListener = listener;
         gestureDetector = new GestureDetector(context, new GestureDetector.OnGestureListener() {
             @Override
             public boolean onDown(MotionEvent e) {
@@ -118,8 +116,8 @@ public class RecipeListAdapter extends RecyclerView.Adapter<RecipeListAdapter.Vi
 
         @Override
         public void onClick(View view) {
-            if (recyclerTouchListener != null) {
-                recyclerTouchListener.onClick(view, this.getLayoutPosition());
+            if (mRecyclerTouchListener != null) {
+                mRecyclerTouchListener.onClick(view, this.getLayoutPosition());
 
                 int itemId = this.getLayoutPosition();
                 Intent intent = new Intent(view.getContext(), RecipeDetailFragment.class);
@@ -151,14 +149,14 @@ public class RecipeListAdapter extends RecyclerView.Adapter<RecipeListAdapter.Vi
                     .into(holder.mRecipeImage);
         }
         holder.mTvRecipeName.setText(recipe.getRecipeName());
-        holder.mView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intentDetailActivity = new Intent(view.getContext(), RecipeDetailActivity.class);
-                intentDetailActivity.putExtra("id", currentId);
-                mContext.startActivity(intentDetailActivity);
-            }
+        /** holder.mView.setOnClickListener(new View.OnClickListener() {
+        @Override public void onClick(View view) {
+        Intent intentDetailActivity = new Intent(view.getContext(), RecipeDetailActivity.class);
+        intentDetailActivity.putExtra("id", currentId);
+        mContext.startActivity(intentDetailActivity);
+        }
         });
+         **/
 
     }
 

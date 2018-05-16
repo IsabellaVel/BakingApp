@@ -15,6 +15,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -43,14 +44,15 @@ import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
 import butterknife.Unbinder;
 
 /**
  * Created by isabe on 5/9/2018.
  */
 
-public class RecipeStepsExoPlayFragment extends Fragment implements Player.EventListener {
-    private static final String LOG_TAG = RecipeStepsExoPlayFragment.class.getSimpleName();
+public class StepsPlayFragment extends Fragment implements Player.EventListener {
+    private static final String LOG_TAG = StepsPlayFragment.class.getSimpleName();
     private ExoPlayer mExoPlayer;
     private PlayerView mExoPlayerView;
     private List<BakingStep> bakingStepList = new ArrayList<>();
@@ -64,13 +66,20 @@ public class RecipeStepsExoPlayFragment extends Fragment implements Player.Event
     @BindView(R.id.step_instructions)
     TextView mDetailedInstructions;
 
-    private static final String EXTRA_DESCR_ID = "EXTRA_ID";
+    @BindView(R.id.button_next)
+    Button mNextButton;
+
+    @BindView(R.id.button_previous)
+    Button mPreviousButton;
+
+    private static final String EXTRA_STEP_ID = "EXTRA_ID";
     private static final String EXTRA_VIDEO_ID = "VIDEO_ID";
     private static final String EXTRA_IMAGE_ID = "IMAGE_ID";
     private String stepDescription;
     private String stepVideoUrl;
     private String stepImageUrl;
     private String stepLongDesc;
+    private int stepId;
 
     private static final long MAX_POSITION_FOR_SEEK_TO_PREVIOUS = 3000;
     private boolean mTwoPane;
@@ -80,17 +89,15 @@ public class RecipeStepsExoPlayFragment extends Fragment implements Player.Event
 
     Unbinder unbinder;
 
-    public RecipeStepsExoPlayFragment newInstance(String stepDescription, String videoUrl, String imageUrl) {
+    public static StepsPlayFragment newInstance(int index) {
         Bundle args = new Bundle();
-        args.putString(EXTRA_DESCR_ID, stepDescription);
-        args.putString(EXTRA_VIDEO_ID, videoUrl);
-        args.putString(EXTRA_IMAGE_ID, imageUrl);
-        RecipeStepsExoPlayFragment exoPlayFragment = new RecipeStepsExoPlayFragment();
+        args.putInt(EXTRA_STEP_ID, index);
+        StepsPlayFragment exoPlayFragment = new StepsPlayFragment();
         exoPlayFragment.setArguments(args);
         return exoPlayFragment;
     }
 
-    public RecipeStepsExoPlayFragment() {
+    public StepsPlayFragment() {
     }
 
     @Override
@@ -165,6 +172,7 @@ public class RecipeStepsExoPlayFragment extends Fragment implements Player.Event
                 mExoPlayer.setPlayWhenReady(false);
             }
 
+            @OnClick(R.id.button_previous)
             public void skipPrevious() {
                 Timeline currentTimeline = mExoPlayer.getCurrentTimeline();
                 if (currentTimeline.isEmpty()) {
@@ -179,7 +187,7 @@ public class RecipeStepsExoPlayFragment extends Fragment implements Player.Event
                     mExoPlayer.seekTo(0, C.TRACK_TYPE_DEFAULT);
                 }
             }
-
+            @OnClick(R.id.button_next)
             public void skipNext() {
                 Timeline currentTimeline = mExoPlayer.getCurrentTimeline();
                 if (currentTimeline.isEmpty()) {

@@ -1,4 +1,4 @@
-package com.example.isabe.bakingapp;
+package com.example.isabe.bakingapp.adapters;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;

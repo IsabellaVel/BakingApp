@@ -13,6 +13,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.example.isabe.bakingapp.adapters.RecipeListAdapter;
+import com.example.isabe.bakingapp.adapters.RecyclerTouchListener;
 import com.example.isabe.bakingapp.loaders.RecipeLoader;
 import com.example.isabe.bakingapp.objects.RecipeContent;
 import com.example.isabe.bakingapp.utilities.NetworkUtils;
@@ -42,7 +43,7 @@ public class RecipeListFragment extends Fragment implements LoaderManager.Loader
     RecyclerView mRecipeListRv;
 
     private List<RecipeContent> mRecipeList;
-    private RecyclerTouchListener.ItemClickListener recyclerTouchListener;
+    private RecyclerTouchListener.ItemClickListener mRecyclerTouchListener;
     @BindInt(R.integer.grid_column_number)
     int gridColNo;
 
@@ -80,7 +81,7 @@ public class RecipeListFragment extends Fragment implements LoaderManager.Loader
         mRecipeListRv.setLayoutManager(new GridLayoutManager(getContext(), gridColNo));
 
         mRecipeAdapter = new RecipeListAdapter(getActivity(), dataRecipe,
-                (RecyclerTouchListener.ItemClickListener) recyclerTouchListener);
+                 mRecyclerTouchListener);
         mRecipeAdapter.setHasStableIds(true);
         mRecipeListRv.setHasFixedSize(true);
         mRecipeListRv.setAdapter(mRecipeAdapter);

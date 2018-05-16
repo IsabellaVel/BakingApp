@@ -25,8 +25,9 @@ import butterknife.ButterKnife;
 
 public class RecipeStepsAdapter extends RecyclerView.Adapter<RecipeStepsAdapter.ViewHolder> {
     private List<BakingStep> stepList = new ArrayList<>();
-    public final OnStepClickListener onStepClickListener;
+    public RecyclerTouchListener.ItemClickListener mRecyclerTouchListener;
     private int adapterPosition;
+    private View mView;
     private static int DEFAULT_STEP_POSITION = 0;
     private Context mContext;
     private RecipeContent recipeItem;
@@ -35,14 +36,15 @@ public class RecipeStepsAdapter extends RecyclerView.Adapter<RecipeStepsAdapter.
     @BindView(R.id.list_step_name)
     TextView mStepName;
 
-    public interface OnStepClickListener {
-        void onClick(int stepId);
-    }
-
-    public RecipeStepsAdapter(Context context, List<BakingStep> steps, OnStepClickListener listener) {
+    /**
+     * public interface OnStepClickListener {
+     * void onClick(int stepId);
+     * }
+     **/
+    public RecipeStepsAdapter(Context context, List<BakingStep> steps, RecyclerTouchListener listener) {
         mContext = context;
         stepList = steps;
-        onStepClickListener = listener;
+        mRecyclerTouchListener = (RecyclerTouchListener.ItemClickListener) listener;
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
@@ -51,19 +53,22 @@ public class RecipeStepsAdapter extends RecyclerView.Adapter<RecipeStepsAdapter.
 
         public ViewHolder(View itemView) {
             super(itemView);
+            mView = itemView;
             ButterKnife.bind(this, itemView);
             itemView.setOnClickListener((View.OnClickListener) this);
         }
 
         @Override
         public void onClick(View view) {
-            adapterPosition = getAdapterPosition();
-            onStepClickListener.onClick(adapterPosition);
+            if (mRecyclerTouchListener != null) {
+                adapterPosition = this.getLayoutPosition();
+                mRecyclerTouchListener.onClick(view, adapterPosition);
 
-            Intent intent = new Intent(view.getContext(), RecipeStepActivity.class);
-            intent.putExtra("step_id", adapterPosition);
-            view.getContext().startActivity(intent);
-            notifyDataSetChanged();
+                Intent intent = new Intent(view.getContext(), RecipeStepActivity.class);
+                intent.putExtra("step_id", adapterPosition);
+                view.getContext().startActivity(intent);
+                notifyDataSetChanged();
+            }
         }
     }
 

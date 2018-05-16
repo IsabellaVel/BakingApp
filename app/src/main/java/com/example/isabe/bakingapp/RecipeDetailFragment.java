@@ -1,6 +1,7 @@
 package com.example.isabe.bakingapp;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.CollapsingToolbarLayout;
@@ -16,6 +17,7 @@ import android.widget.TextView;
 
 import com.example.isabe.bakingapp.adapters.RecipeListAdapter;
 import com.example.isabe.bakingapp.adapters.RecipeStepsAdapter;
+import com.example.isabe.bakingapp.adapters.RecyclerTouchListener;
 import com.example.isabe.bakingapp.objects.BakingStep;
 import com.example.isabe.bakingapp.objects.RecipeContent;
 
@@ -43,7 +45,7 @@ public class RecipeDetailFragment extends Fragment {
     private RecipeListAdapter mRecipeAdapter;
     private List<BakingStep> mBakingSteps = new ArrayList<>();
 
-    private RecipeStepsAdapter.OnStepClickListener onStepClickListener;
+    private RecyclerTouchListener onStepClickListener;
     @BindView(R.id.ingreds_details)
     TextView tvRecipeIngreds;
 
@@ -142,10 +144,16 @@ public class RecipeDetailFragment extends Fragment {
                         String thisStepVideoUrl = thisRecipeStep.getVideoUrl();
                         String thisStepImageUrl = thisRecipeStep.thumbnailStepUrl;
 
-                        Fragment exoPlayerFragment = new RecipeStepsExoPlayFragment();
+                        Fragment exoPlayerFragment = new StepsPlayFragment();
                         Bundle bundle = new Bundle();
                         bundle.putParcelable(STEP_SELECTION, thisRecipeStep);
                         exoPlayerFragment.setArguments(bundle);
+
+                        Intent showStepsDetails = new Intent(getActivity().getBaseContext(),
+                                RecipeStepActivity.class);
+                        showStepsDetails.putExtra(STEP_SELECTION, thisRecipeStep);
+                        getActivity().startActivity(showStepsDetails);
+
                     }
                 }));
 

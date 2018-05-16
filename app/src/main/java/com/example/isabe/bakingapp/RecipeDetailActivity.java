@@ -93,7 +93,7 @@ public class RecipeDetailActivity extends AppCompatActivity {
              .commit();
              **/
             // TODO Add fragment for Video and steps instructions
-            RecipeStepsExoPlayFragment recipeStepsFragment = new RecipeStepsExoPlayFragment();
+            StepsPlayFragment recipeStepsFragment = new StepsPlayFragment();
             getSupportFragmentManager().beginTransaction()
                     .add(R.id.frame_recycler, recipeStepsFragment)
                     .commit();
