@@ -17,7 +17,7 @@ import com.example.isabe.bakingapp.objects.BakingStep;
 public class RecipeStepActivity extends AppCompatActivity {
     public static final String RECIPE_ID = "RECIPE_ID";
     private static final int DEFAULT_ID = 1;
-    public static final String STEP_ID = "STEP_ID";
+    public static final String STEP_ID = "step_id";
     private static final int DEFAULT_STEP_ID = 0;
     public BakingStep mBakingStep;
     int stepId;

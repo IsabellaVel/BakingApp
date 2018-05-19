@@ -11,13 +11,17 @@
         android:layout_height="wrap_content"
         android:background="@color/colorPrimaryLight">
 
-        <TextView
+        <Button
             android:id="@+id/ingreds_details"
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:padding="5dp"
-            android:textSize="12sp"
-            tools:text="Ingredients list: \nItem1\Item2" />
+            android:layout_gravity="center_horizontal"
+            android:padding="8dp"
+            android:scaleType="centerInside"
+            android:text="@string/recipe_ingredients"
+            android:textSize="20sp"
+            android:textStyle="bold" />
+
     </android.support.v7.widget.CardView>
 
     <android.support.v7.widget.CardView

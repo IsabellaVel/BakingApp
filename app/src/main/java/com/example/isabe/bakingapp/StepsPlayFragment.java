@@ -19,6 +19,7 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.example.isabe.bakingapp.adapters.RecipeStepsAdapter;
 import com.example.isabe.bakingapp.objects.BakingStep;
 import com.google.android.exoplayer2.C;
 import com.google.android.exoplayer2.ExoPlaybackException;
@@ -56,6 +57,7 @@ public class StepsPlayFragment extends Fragment implements Player.EventListener 
     private ExoPlayer mExoPlayer;
     private PlayerView mExoPlayerView;
     private List<BakingStep> bakingStepList = new ArrayList<>();
+    private BakingStep mBakingStep;
 
     @BindView(R.id.step_video)
     PlayerView mStepVideo;
@@ -67,10 +69,10 @@ public class StepsPlayFragment extends Fragment implements Player.EventListener 
     TextView mDetailedInstructions;
 
     @BindView(R.id.button_next)
-    Button mNextButton;
+    public Button mNextButton;
 
     @BindView(R.id.button_previous)
-    Button mPreviousButton;
+    public Button mPreviousButton;
 
     private static final String EXTRA_STEP_ID = "EXTRA_ID";
     private static final String EXTRA_VIDEO_ID = "VIDEO_ID";
@@ -79,15 +81,20 @@ public class StepsPlayFragment extends Fragment implements Player.EventListener 
     private String stepVideoUrl;
     private String stepImageUrl;
     private String stepLongDesc;
-    private int stepId;
+    private int stepId = 0;
 
     private static final long MAX_POSITION_FOR_SEEK_TO_PREVIOUS = 3000;
     private boolean mTwoPane;
     private MediaSessionCompat mMediaSession;
     private PlaybackStateCompat.Builder mStateBuilder;
     private Timeline.Window currentWindow = new Timeline.Window();
+    private RecipeStepsAdapter mRecipeAdapter;
 
     Unbinder unbinder;
+
+    public StepsPlayFragment() {
+
+    }
 
     public static StepsPlayFragment newInstance(int index) {
         Bundle args = new Bundle();
@@ -97,14 +104,11 @@ public class StepsPlayFragment extends Fragment implements Player.EventListener 
         return exoPlayFragment;
     }
 
-    public StepsPlayFragment() {
-    }
-
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        if (getArguments() != null) {
+            if (getArguments() != null) {
             BakingStep stepsList = getArguments().getParcelable(RecipeDetailFragment.STEP_SELECTION);
             stepDescription = stepsList.getBriefStepDescription();
             stepLongDesc = stepsList.getLongStepDescription();
@@ -118,6 +122,7 @@ public class StepsPlayFragment extends Fragment implements Player.EventListener 
                              @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_step_details, container, false);
         unbinder = ButterKnife.bind(this, view);
+
         return view;
     }
 
@@ -125,7 +130,8 @@ public class StepsPlayFragment extends Fragment implements Player.EventListener 
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        mDetailedInstructions.setText(stepDescription);
+        mDetailedInstructions.setText(stepLongDesc);
+        mDetailedInstructions.setTextSize(20);
 
         if (stepImageUrl == null || stepImageUrl.isEmpty()) {
             mStepImage.setVisibility(View.GONE);
@@ -145,7 +151,10 @@ public class StepsPlayFragment extends Fragment implements Player.EventListener 
         } else {
             mStepVideo.setVisibility(View.GONE);
         }
+
+
     }
+
 
     private void initializeMediaSession() {
         mMediaSession = new MediaSessionCompat(getContext(), LOG_TAG);
@@ -172,7 +181,6 @@ public class StepsPlayFragment extends Fragment implements Player.EventListener 
                 mExoPlayer.setPlayWhenReady(false);
             }
 
-            @OnClick(R.id.button_previous)
             public void skipPrevious() {
                 Timeline currentTimeline = mExoPlayer.getCurrentTimeline();
                 if (currentTimeline.isEmpty()) {
@@ -187,7 +195,7 @@ public class StepsPlayFragment extends Fragment implements Player.EventListener 
                     mExoPlayer.seekTo(0, C.TRACK_TYPE_DEFAULT);
                 }
             }
-            @OnClick(R.id.button_next)
+
             public void skipNext() {
                 Timeline currentTimeline = mExoPlayer.getCurrentTimeline();
                 if (currentTimeline.isEmpty()) {
@@ -206,6 +214,41 @@ public class StepsPlayFragment extends Fragment implements Player.EventListener 
 
         MediaControllerCompat mediaControllerCompat = new MediaControllerCompat(getContext(), mMediaSession);
         MediaControllerCompat.setMediaController(getActivity(), mediaControllerCompat);
+
+    }
+
+    @OnClick(R.id.button_next)
+    public void toNext() {
+        try {
+            stepId = mRecipeAdapter.selectedPosition;
+            stepId = stepId + 1;
+
+            mBakingStep = bakingStepList.get(stepId);
+            stepLongDesc = mBakingStep.getLongStepDescription();
+            stepVideoUrl = mBakingStep.getVideoUrl();
+            stepImageUrl = mBakingStep.getThumbnailStepUrl();
+            releasePlayer();
+            mDetailedInstructions.setText(stepLongDesc);
+        } catch (IndexOutOfBoundsException e) {
+            e.printStackTrace();
+            stepId = stepId - 1;
+        }
+    }
+
+    @OnClick(R.id.button_previous)
+    public void toPrevious() {
+        if (stepId > 0) {
+            stepId = mRecipeAdapter.adapterPosition;
+            stepId = stepId - 1;
+            mBakingStep = bakingStepList.get(stepId);
+            stepLongDesc = mBakingStep.getLongStepDescription();
+            stepVideoUrl = mBakingStep.getVideoUrl();
+            stepImageUrl = mBakingStep.getThumbnailStepUrl();
+            releasePlayer();
+            mDetailedInstructions.setText(stepLongDesc);
+        } else if (stepId == 0) {
+            mPreviousButton.setEnabled(false);
+        }
 
     }
 
@@ -315,5 +358,9 @@ public class StepsPlayFragment extends Fragment implements Player.EventListener 
     @Override
     public void onPlayerError(ExoPlaybackException error) {
 
+    }
+
+    public int getShownIndex() {
+        return getArguments().getInt("index", 0);
     }
 }

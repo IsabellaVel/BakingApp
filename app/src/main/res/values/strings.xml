@@ -4,4 +4,5 @@
     <string name="title_step_activity">Recipe Step</string>
     <string name="string_next">Next</string>
     <string name="string_previous">Previous</string>
+    <string name="recipe_ingredients">Recipe Ingredients</string>
 </resources>
