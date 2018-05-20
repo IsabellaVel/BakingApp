@@ -44,7 +44,7 @@ public class RecipeDetailFragment extends Fragment {
 
     private RecipeStepsAdapter recipeStepsAdapter;
     private RecipeListAdapter mRecipeAdapter;
-    private List<BakingStep> mBakingSteps = new ArrayList<>();
+    private static List<BakingStep> mBakingSteps = new ArrayList<>();
 
     private RecyclerTouchListener onStepClickListener;
     @BindView(R.id.ingreds_details)
@@ -229,7 +229,9 @@ public class RecipeDetailFragment extends Fragment {
     public void toPrevious(int index){
         mRecipeStepsRecyclerView.getLayoutManager().scrollToPosition(mCurrCheckedPosition - 1);
     }
-
+    public static List<BakingStep> getListOfSteps(){
+        return mBakingSteps;
+    }
 
 }
 

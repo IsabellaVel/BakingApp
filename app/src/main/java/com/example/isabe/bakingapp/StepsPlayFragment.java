@@ -22,6 +22,8 @@ import android.widget.TextView;
 import com.example.isabe.bakingapp.adapters.RecipeStepsAdapter;
 import com.example.isabe.bakingapp.objects.BakingStep;
 import com.google.android.exoplayer2.C;
+import com.google.android.exoplayer2.DefaultLoadControl;
+import com.google.android.exoplayer2.DefaultRenderersFactory;
 import com.google.android.exoplayer2.ExoPlaybackException;
 import com.google.android.exoplayer2.ExoPlayer;
 import com.google.android.exoplayer2.ExoPlayerFactory;
@@ -33,11 +35,8 @@ import com.google.android.exoplayer2.source.MediaSource;
 import com.google.android.exoplayer2.source.TrackGroupArray;
 import com.google.android.exoplayer2.trackselection.DefaultTrackSelector;
 import com.google.android.exoplayer2.trackselection.TrackSelectionArray;
-import com.google.android.exoplayer2.trackselection.TrackSelector;
 import com.google.android.exoplayer2.ui.PlayerView;
-import com.google.android.exoplayer2.upstream.DataSource;
-import com.google.android.exoplayer2.upstream.DefaultBandwidthMeter;
-import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory;
+import com.google.android.exoplayer2.upstream.DefaultHttpDataSourceFactory;
 import com.google.android.exoplayer2.util.Util;
 
 import java.util.ArrayList;
@@ -54,10 +53,11 @@ import butterknife.Unbinder;
 
 public class StepsPlayFragment extends Fragment implements Player.EventListener {
     private static final String LOG_TAG = StepsPlayFragment.class.getSimpleName();
+    private static final java.lang.String VIDEO_POSITION = "position_video";
     private ExoPlayer mExoPlayer;
     private PlayerView mExoPlayerView;
     private List<BakingStep> bakingStepList = new ArrayList<>();
-    private BakingStep mBakingStep;
+    private BakingStep stepItem;
 
     @BindView(R.id.step_video)
     PlayerView mStepVideo;
@@ -81,14 +81,16 @@ public class StepsPlayFragment extends Fragment implements Player.EventListener 
     private String stepVideoUrl;
     private String stepImageUrl;
     private String stepLongDesc;
-    private int stepId = 0;
+    private int stepId;
 
     private static final long MAX_POSITION_FOR_SEEK_TO_PREVIOUS = 3000;
     private boolean mTwoPane;
     private MediaSessionCompat mMediaSession;
     private PlaybackStateCompat.Builder mStateBuilder;
     private Timeline.Window currentWindow = new Timeline.Window();
+    private int currentWindowIndex = 0;
     private RecipeStepsAdapter mRecipeAdapter;
+    private long playbackPosition = 0;
 
     Unbinder unbinder;
 
@@ -108,12 +110,14 @@ public class StepsPlayFragment extends Fragment implements Player.EventListener 
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-            if (getArguments() != null) {
-            BakingStep stepsList = getArguments().getParcelable(RecipeDetailFragment.STEP_SELECTION);
-            stepDescription = stepsList.getBriefStepDescription();
-            stepLongDesc = stepsList.getLongStepDescription();
-            stepVideoUrl = stepsList.getVideoUrl();
-            stepImageUrl = stepsList.getThumbnailStepUrl();
+        if (getArguments() != null) {
+
+            stepItem = getArguments().getParcelable(RecipeDetailFragment.STEP_SELECTION);
+            stepId = stepItem.getId();
+            stepDescription = stepItem.getBriefStepDescription();
+            stepLongDesc = stepItem.getLongStepDescription();
+            stepVideoUrl = stepItem.getVideoUrl();
+            stepImageUrl = stepItem.getThumbnailStepUrl();
         }
     }
 
@@ -123,6 +127,10 @@ public class StepsPlayFragment extends Fragment implements Player.EventListener 
         View view = inflater.inflate(R.layout.fragment_step_details, container, false);
         unbinder = ButterKnife.bind(this, view);
 
+        bakingStepList = RecipeDetailFragment.getListOfSteps();
+        if (savedInstanceState != null) {
+            playbackPosition = savedInstanceState.getLong(VIDEO_POSITION, mExoPlayer.getCurrentPosition());
+        }
         return view;
     }
 
@@ -151,8 +159,6 @@ public class StepsPlayFragment extends Fragment implements Player.EventListener 
         } else {
             mStepVideo.setVisibility(View.GONE);
         }
-
-
     }
 
 
@@ -175,10 +181,6 @@ public class StepsPlayFragment extends Fragment implements Player.EventListener 
             @Override
             public void onPlay() {
                 mExoPlayer.setPlayWhenReady(true);
-            }
-
-            public void onPause() {
-                mExoPlayer.setPlayWhenReady(false);
             }
 
             public void skipPrevious() {
@@ -220,14 +222,23 @@ public class StepsPlayFragment extends Fragment implements Player.EventListener 
     @OnClick(R.id.button_next)
     public void toNext() {
         try {
-            stepId = mRecipeAdapter.selectedPosition;
+            stepId = stepItem.getId();
             stepId = stepId + 1;
 
-            mBakingStep = bakingStepList.get(stepId);
-            stepLongDesc = mBakingStep.getLongStepDescription();
-            stepVideoUrl = mBakingStep.getVideoUrl();
-            stepImageUrl = mBakingStep.getThumbnailStepUrl();
+            stepItem = bakingStepList.get(stepId);
+            stepLongDesc = stepItem.getLongStepDescription();
+            stepVideoUrl = stepItem.getVideoUrl();
             releasePlayer();
+
+            if (stepVideoUrl != null && !stepVideoUrl.isEmpty()) {
+                mStepVideo.setVisibility(View.VISIBLE);
+                initializeMediaSession();
+                initializePlayer(Uri.parse(stepVideoUrl));
+            } else {
+                mStepVideo.setVisibility(View.GONE);
+            }
+
+            stepImageUrl = stepItem.getThumbnailStepUrl();
             mDetailedInstructions.setText(stepLongDesc);
         } catch (IndexOutOfBoundsException e) {
             e.printStackTrace();
@@ -238,13 +249,23 @@ public class StepsPlayFragment extends Fragment implements Player.EventListener 
     @OnClick(R.id.button_previous)
     public void toPrevious() {
         if (stepId > 0) {
-            stepId = mRecipeAdapter.adapterPosition;
+            stepId = stepItem.getId();
             stepId = stepId - 1;
-            mBakingStep = bakingStepList.get(stepId);
-            stepLongDesc = mBakingStep.getLongStepDescription();
-            stepVideoUrl = mBakingStep.getVideoUrl();
-            stepImageUrl = mBakingStep.getThumbnailStepUrl();
+
+            stepItem = bakingStepList.get(stepId);
+            stepLongDesc = stepItem.getLongStepDescription();
+            stepVideoUrl = stepItem.getVideoUrl();
             releasePlayer();
+
+            if (stepVideoUrl != null && !stepVideoUrl.isEmpty()) {
+                mStepVideo.setVisibility(View.VISIBLE);
+                initializeMediaSession();
+                initializePlayer(Uri.parse(stepVideoUrl));
+            } else {
+                mStepVideo.setVisibility(View.GONE);
+            }
+            stepImageUrl = stepItem.getThumbnailStepUrl();
+
             mDetailedInstructions.setText(stepLongDesc);
         } else if (stepId == 0) {
             mPreviousButton.setEnabled(false);
@@ -271,26 +292,33 @@ public class StepsPlayFragment extends Fragment implements Player.EventListener 
 
     private void initializePlayer(Uri videoUri) {
         if (mExoPlayer == null) {
-            TrackSelector trackSelector = new DefaultTrackSelector();
-            mExoPlayer = ExoPlayerFactory.newSimpleInstance(getContext(), trackSelector);
+            mExoPlayer = ExoPlayerFactory.newSimpleInstance(
+                    new DefaultRenderersFactory(getContext()),
+                    new DefaultTrackSelector(), new DefaultLoadControl());
+
             mStepVideo.setPlayer(mExoPlayer);
-            mExoPlayer.addListener(this);
-
-            DefaultBandwidthMeter bandwidthMeter = new DefaultBandwidthMeter();
-            String userAgent = Util.getUserAgent(getContext(), "Video Step");
-
-            DataSource.Factory dataSourceFactory = new DefaultDataSourceFactory(getContext(), userAgent,
-                    bandwidthMeter);
-            MediaSource videoSource = new ExtractorMediaSource.Factory(dataSourceFactory)
-                    .createMediaSource(videoUri);
-            mExoPlayer.prepare(videoSource);
             mExoPlayer.setPlayWhenReady(true);
+            mExoPlayer.seekTo(currentWindowIndex, playbackPosition);
+
+            Uri uri = Uri.parse(stepVideoUrl);
+
+            MediaSource mediaSource = buildMediaSource(uri);
+            mExoPlayer.prepare(mediaSource, true, false);
         }
 
     }
 
+    private MediaSource buildMediaSource(Uri uri) {
+        return new ExtractorMediaSource.Factory(
+                new DefaultHttpDataSourceFactory("Video Step"))
+                .createMediaSource(uri);
+    }
+
     public void releasePlayer() {
         if (mExoPlayer != null) {
+            playbackPosition = mExoPlayer.getCurrentPosition();
+            currentWindowIndex = mExoPlayer.getCurrentWindowIndex();
+            mExoPlayer.setPlayWhenReady(false);
             mExoPlayer.release();
             mExoPlayer = null;
         }
@@ -314,6 +342,45 @@ public class StepsPlayFragment extends Fragment implements Player.EventListener 
         }
         mMediaSession.setPlaybackState(mStateBuilder.build());
     }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        if (Util.SDK_INT > 23) {
+            if (stepVideoUrl != null && !stepVideoUrl.isEmpty()) {
+                initializeMediaSession();
+                initializePlayer(Uri.parse(stepVideoUrl));
+            }
+        }
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        if (Util.SDK_INT <= 23) {
+            releasePlayer();
+        }
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        if (Util.SDK_INT > 23) {
+            releasePlayer();
+        }
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        if (Util.SDK_INT <= 23 || mExoPlayer == null) {
+            if (stepVideoUrl != null && !stepVideoUrl.isEmpty()) {
+                initializeMediaSession();
+                initializePlayer(Uri.parse(stepVideoUrl));
+            }
+        }
+    }
+
 
     @Override
     public void onRepeatModeChanged(int repeatMode) {

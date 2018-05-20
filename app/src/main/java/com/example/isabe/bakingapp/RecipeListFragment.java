@@ -37,6 +37,7 @@ public class RecipeListFragment extends Fragment implements LoaderManager.Loader
     public static final String RECIPE_SELECTION = "thisRecipe";
     private static final int LOADER_ID = 11;
     private static final String LOG_TAG = RecipeListFragment.class.getSimpleName();
+    private static final int REQUEST_CODE = 1;
     private RecipeListAdapter mRecipeAdapter;
 
     @BindView(R.id.recipes_list_rv)
@@ -101,7 +102,8 @@ public class RecipeListFragment extends Fragment implements LoaderManager.Loader
 
                         Intent showDetailsRecipe = new Intent(getActivity().getBaseContext(), RecipeDetailActivity.class);
                         showDetailsRecipe.putExtra(RECIPE_SELECTION, thisRecipe);
-                        getActivity().startActivity(showDetailsRecipe);
+                        getActivity().startActivityForResult(showDetailsRecipe, REQUEST_CODE);
+
                     }
 
                 }));
@@ -119,4 +121,5 @@ public class RecipeListFragment extends Fragment implements LoaderManager.Loader
         mRecipeAdapter.clear();
 
     }
+
 }

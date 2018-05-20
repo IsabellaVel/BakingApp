@@ -9,6 +9,9 @@ import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 
 import com.example.isabe.bakingapp.objects.BakingStep;
+import com.example.isabe.bakingapp.objects.RecipeContent;
+
+import java.util.List;
 
 /**
  * Created by isabe on 5/13/2018.
@@ -19,7 +22,9 @@ public class RecipeStepActivity extends AppCompatActivity {
     private static final int DEFAULT_ID = 1;
     public static final String STEP_ID = "step_id";
     private static final int DEFAULT_STEP_ID = 0;
-    public BakingStep mBakingStep;
+    public BakingStep mStepItem;
+    private RecipeContent recipeItem;
+    public static List<BakingStep> thisRecipeSteps;
     int stepId;
 
     public static Intent createIntent(Context context, int recipeId, int stepId) {
@@ -29,10 +34,11 @@ public class RecipeStepActivity extends AppCompatActivity {
         return intent;
     }
 
-    public void attachSteps(Context context, Parcelable object) {
+    public void attachSteps(Context context, Parcelable step) {
+        mStepItem = getIntent().getParcelableExtra(RecipeDetailFragment.STEP_SELECTION);
         context = getBaseContext();
         Bundle bundle = new Bundle();
-        bundle.putParcelable(RecipeDetailFragment.STEP_SELECTION, mBakingStep);
+        bundle.putParcelable(RecipeDetailFragment.STEP_SELECTION, mStepItem);
         StepsPlayFragment playFragment = new StepsPlayFragment();
         playFragment.setArguments(bundle);
 
@@ -41,6 +47,18 @@ public class RecipeStepActivity extends AppCompatActivity {
                 .commit();
     }
 
+    /**
+     * public void attachStepsFromRecipe(Context context, Parcelable object){
+     * //add bundle for Recipe and extract stepList
+     * Bundle bundleSteps = new Bundle();
+     * bundleSteps.putParcelable(RecipeListFragment.RECIPE_SELECTION, recipeItem);
+     * StepsPlayFragment playFragment = new StepsPlayFragment();
+     * playFragment.setArguments(bundleSteps);
+     * getSupportFragmentManager().beginTransaction()
+     * .add(R.id.stepFragmentContainer, playFragment)
+     * .commit();
+     * }
+     **/
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -51,26 +69,41 @@ public class RecipeStepActivity extends AppCompatActivity {
             finish();
             return;
         }
+        attachSteps(getBaseContext(), mStepItem);
+        //attachStepsFromRecipe(getBaseContext(), recipeItem);
+
         StepsPlayFragment stepsPlayFragment =
                 (StepsPlayFragment) getSupportFragmentManager()
                         .findFragmentById(R.id.stepFragmentContainer);
 
         if (savedInstanceState != null) {
-            mBakingStep = savedInstanceState.getParcelable(RecipeDetailFragment.STEP_SELECTION);
+        //    recipeItem = savedInstanceState.getParcelable(RecipeListFragment.RECIPE_SELECTION);
+            mStepItem = savedInstanceState.getParcelable(RecipeDetailFragment.STEP_SELECTION);
         }
-        mBakingStep = getIntent().getParcelableExtra(RecipeDetailFragment.STEP_SELECTION);
-        int stepParcelId = mBakingStep.getId();
-        String stepShortName = mBakingStep.getBriefStepDescription();
-        String stepLongDesc = mBakingStep.getLongStepDescription();
-        String stepVideoUrl = mBakingStep.getVideoUrl();
-        String stepImageUrl = mBakingStep.getThumbnailStepUrl();
+
+
+        mStepItem = getIntent().getParcelableExtra(RecipeDetailFragment.STEP_SELECTION);
+        int stepParcelId = mStepItem.getId();
+        String stepShortName = mStepItem.getBriefStepDescription();
+        String stepLongDesc = mStepItem.getLongStepDescription();
+        String stepVideoUrl = mStepItem.getVideoUrl();
+        String stepImageUrl = mStepItem.getThumbnailStepUrl();
 
         stepParcelId = getIntent().getIntExtra(STEP_ID, stepId);
 
+        //add parcelable for steps of recipe
+        //   recipeItem = getIntent().getParcelableExtra(RecipeListFragment.RECIPE_SELECTION);
+        thisRecipeSteps = RecipeDetailFragment.getListOfSteps();
+
+
         if (savedInstanceState == null) {
-        attachSteps(getBaseContext(), mBakingStep);
+            mStepItem = getIntent().getParcelableExtra(RecipeDetailFragment.STEP_SELECTION);
+            attachSteps(getBaseContext(), mStepItem);
+//        attachStepsFromRecipe(getBaseContext(), recipeItem);
         }
     }
+
+
 }
 
 
