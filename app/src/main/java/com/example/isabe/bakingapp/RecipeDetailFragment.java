@@ -41,6 +41,7 @@ public class RecipeDetailFragment extends Fragment {
     private static final String LOG_TAG = RecipeDetailFragment.class.getSimpleName();
     private Unbinder unbinder;
     public static final String STEP_SELECTION = "STEP_ID";
+    public static final String INDEX_POSITION = "index";
 
     private RecipeStepsAdapter recipeStepsAdapter;
     private RecipeListAdapter mRecipeAdapter;
@@ -78,7 +79,7 @@ public class RecipeDetailFragment extends Fragment {
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
 
-        outState.putInt("curr_choice", mCurrCheckedPosition);
+        outState.putInt(STEP_SELECTION, mCurrCheckedPosition);
     }
 
     @Override
@@ -87,18 +88,20 @@ public class RecipeDetailFragment extends Fragment {
 
         recipeStepsAdapter = new RecipeStepsAdapter(getActivity(), mBakingSteps, onStepClickListener);
 
-        layoutManager = new LinearLayoutManager(getContext());
-        mRecipeStepsRecyclerView.setLayoutManager(layoutManager);
+        //remove this code to test fragment initialization
+        /**layoutManager = new LinearLayoutManager(getContext());
+         mRecipeStepsRecyclerView.setLayoutManager(layoutManager);
 
-        recipeStepsAdapter.setHasStableIds(true);
-        mRecipeStepsRecyclerView.setHasFixedSize(true);
-        mRecipeStepsRecyclerView.setAdapter(recipeStepsAdapter);
-
+         recipeStepsAdapter.setHasStableIds(true);
+         mRecipeStepsRecyclerView.setHasFixedSize(true);
+         mRecipeStepsRecyclerView.setAdapter(recipeStepsAdapter);
+         **/
         View stepsPlayFrame = getActivity().findViewById(R.id.frame_recycler);
         mTwoPane = stepsPlayFrame != null && stepsPlayFrame.getVisibility() == View.VISIBLE;
 
         if (savedInstanceState != null) {
             mStepItem = savedInstanceState.getParcelable(STEP_SELECTION);
+            mCurrCheckedPosition = savedInstanceState.getInt(STEP_SELECTION);
 
             if (mTwoPane) {
                 showStepsPlayer(mCurrCheckedPosition);
@@ -110,6 +113,8 @@ public class RecipeDetailFragment extends Fragment {
         mCurrCheckedPosition = index;
 
         if (mTwoPane) {
+
+
             StepsPlayFragment stepsPlayerFragment = (StepsPlayFragment)
                     getFragmentManager().findFragmentById(R.id.frame_recycler);
             if (stepsPlayerFragment == null || stepsPlayerFragment.getShownIndex() != index) {
@@ -119,6 +124,8 @@ public class RecipeDetailFragment extends Fragment {
                         .beginTransaction();
                 if (index == 0) {
                     fragmentTransaction.replace(R.id.frame_recycler, stepsPlayerFragment);
+                }else {
+                    fragmentTransaction.replace(R.id.frame_recycler, stepsPlayerFragment);
                 }
 
                 fragmentTransaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE);
@@ -127,7 +134,7 @@ public class RecipeDetailFragment extends Fragment {
                 setUpRecyclerListener(mRecipeStepsRecyclerView);
                 Intent intent = new Intent();
                 intent.setClass(getActivity(), RecipeStepActivity.class);
-                intent.putExtra("index", index);
+                intent.putExtra(INDEX_POSITION, index);
                 startActivity(intent);
             }
         }
@@ -222,14 +229,7 @@ public class RecipeDetailFragment extends Fragment {
         unbinder.unbind();
     }
 
-    public void toNext(int index) {
-        mRecipeStepsRecyclerView.getLayoutManager().scrollToPosition(mCurrCheckedPosition + 1);
-    }
-
-    public void toPrevious(int index){
-        mRecipeStepsRecyclerView.getLayoutManager().scrollToPosition(mCurrCheckedPosition - 1);
-    }
-    public static List<BakingStep> getListOfSteps(){
+    public static List<BakingStep> getListOfSteps() {
         return mBakingSteps;
     }
 

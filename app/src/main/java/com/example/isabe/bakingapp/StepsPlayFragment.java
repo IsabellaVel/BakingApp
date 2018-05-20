@@ -3,8 +3,10 @@ package com.example.isabe.bakingapp;
 import android.content.Context;
 import android.content.res.Configuration;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.annotation.RequiresApi;
 import android.support.v4.app.Fragment;
 import android.support.v4.media.session.MediaControllerCompat;
 import android.support.v4.media.session.MediaSessionCompat;
@@ -47,6 +49,8 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import butterknife.Unbinder;
 
+import static com.example.isabe.bakingapp.RecipeDetailFragment.INDEX_POSITION;
+
 /**
  * Created by isabe on 5/9/2018.
  */
@@ -77,6 +81,7 @@ public class StepsPlayFragment extends Fragment implements Player.EventListener 
     private static final String EXTRA_STEP_ID = "EXTRA_ID";
     private static final String EXTRA_VIDEO_ID = "VIDEO_ID";
     private static final String EXTRA_IMAGE_ID = "IMAGE_ID";
+
     private String stepDescription;
     private String stepVideoUrl;
     private String stepImageUrl;
@@ -100,7 +105,7 @@ public class StepsPlayFragment extends Fragment implements Player.EventListener 
 
     public static StepsPlayFragment newInstance(int index) {
         Bundle args = new Bundle();
-        args.putInt(EXTRA_STEP_ID, index);
+        args.putInt(INDEX_POSITION, index);
         StepsPlayFragment exoPlayFragment = new StepsPlayFragment();
         exoPlayFragment.setArguments(args);
         return exoPlayFragment;
@@ -131,9 +136,11 @@ public class StepsPlayFragment extends Fragment implements Player.EventListener 
         if (savedInstanceState != null) {
             playbackPosition = savedInstanceState.getLong(VIDEO_POSITION, mExoPlayer.getCurrentPosition());
         }
+
         return view;
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.KITKAT)
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
@@ -154,11 +161,23 @@ public class StepsPlayFragment extends Fragment implements Player.EventListener 
             if (configOrientation == Configuration.ORIENTATION_LANDSCAPE && !mTwoPane) {
                 expandVideoFullScreen(mStepVideo);
                 mDetailedInstructions.setVisibility(View.GONE);
+                hideSystemUI();
 
             }
         } else {
             mStepVideo.setVisibility(View.GONE);
         }
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.KITKAT)
+    private void hideSystemUI() {
+        mStepVideo.setSystemUiVisibility(
+                View.SYSTEM_UI_FLAG_LOW_PROFILE
+                        | View.SYSTEM_UI_FLAG_FULLSCREEN
+                        | View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+                        | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY
+                        | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
+                        | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION);
     }
 
 
@@ -319,6 +338,7 @@ public class StepsPlayFragment extends Fragment implements Player.EventListener 
             playbackPosition = mExoPlayer.getCurrentPosition();
             currentWindowIndex = mExoPlayer.getCurrentWindowIndex();
             mExoPlayer.setPlayWhenReady(false);
+            mExoPlayer.stop();
             mExoPlayer.release();
             mExoPlayer = null;
         }
@@ -348,8 +368,8 @@ public class StepsPlayFragment extends Fragment implements Player.EventListener 
         super.onStart();
         if (Util.SDK_INT > 23) {
             if (stepVideoUrl != null && !stepVideoUrl.isEmpty()) {
-                initializeMediaSession();
-                initializePlayer(Uri.parse(stepVideoUrl));
+               //initializeMediaSession();
+               //initializePlayer(Uri.parse(stepVideoUrl));
             }
         }
     }
@@ -375,8 +395,6 @@ public class StepsPlayFragment extends Fragment implements Player.EventListener 
         super.onResume();
         if (Util.SDK_INT <= 23 || mExoPlayer == null) {
             if (stepVideoUrl != null && !stepVideoUrl.isEmpty()) {
-                initializeMediaSession();
-                initializePlayer(Uri.parse(stepVideoUrl));
             }
         }
     }
@@ -428,6 +446,6 @@ public class StepsPlayFragment extends Fragment implements Player.EventListener 
     }
 
     public int getShownIndex() {
-        return getArguments().getInt("index", 0);
+        return getArguments().getInt(INDEX_POSITION, 0);
     }
 }

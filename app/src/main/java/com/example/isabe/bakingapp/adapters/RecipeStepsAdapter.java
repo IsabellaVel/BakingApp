@@ -85,9 +85,8 @@ public class RecipeStepsAdapter extends RecyclerView.Adapter<RecipeStepsAdapter.
     @Override
     public void onBindViewHolder(final ViewHolder holder, final int position) {
         final BakingStep bakingStep = stepList.get(position);
-        selectedPosition = bakingStep.getId();
+        // selectedPosition = bakingStep.getId();
         holder.mStepName.setText(bakingStep.getBriefStepDescription());
-
 
         if (selectedPosition == position) {
             holder.mStepName.setBackgroundColor(Color.parseColor("#D3D3D3"));
@@ -103,7 +102,7 @@ public class RecipeStepsAdapter extends RecyclerView.Adapter<RecipeStepsAdapter.
         });
     }
 
-     @Override
+    @Override
     public int getItemCount() {
         return stepList.size();
     }

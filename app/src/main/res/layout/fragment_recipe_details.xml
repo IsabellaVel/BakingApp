@@ -11,14 +11,14 @@
         android:layout_height="wrap_content"
         android:background="@color/colorPrimaryLight">
 
-        <Button
+        <TextView
             android:id="@+id/ingreds_details"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
             android:padding="8dp"
             android:scaleType="centerInside"
-            android:text="@string/recipe_ingredients"
+            android:text="Ingredients list: \nItem1\nItem2"
             android:textSize="20sp"
             android:textStyle="bold" />
 

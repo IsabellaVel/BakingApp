@@ -21,7 +21,8 @@
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:resize_mode="fixed_width" />
+            app:resize_mode="fixed_width"
+            />
     </FrameLayout>
 
     <android.support.v7.widget.CardView

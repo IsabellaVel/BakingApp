@@ -69,7 +69,8 @@ public class RecipeStepActivity extends AppCompatActivity {
             finish();
             return;
         }
-        attachSteps(getBaseContext(), mStepItem);
+
+       // attachSteps(getBaseContext(), mStepItem);
         //attachStepsFromRecipe(getBaseContext(), recipeItem);
 
         StepsPlayFragment stepsPlayFragment =
