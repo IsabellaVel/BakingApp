@@ -45,13 +45,13 @@
             android:layout_height="wrap_content"
             android:orientation="horizontal">
 
-                <FrameLayout
-                    android:id="@+id/fragment_details_container"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:scaleType="centerInside">
+            <FrameLayout
+                android:id="@+id/fragment_details_container"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:scaleType="centerInside">
 
-                </FrameLayout>
+            </FrameLayout>
 
             <FrameLayout
                 android:id="@+id/frame_recycler"
@@ -59,6 +59,7 @@
                 android:layout_height="wrap_content">
 
             </FrameLayout>
+            -->
         </LinearLayout>
     </android.support.v4.widget.NestedScrollView>
 

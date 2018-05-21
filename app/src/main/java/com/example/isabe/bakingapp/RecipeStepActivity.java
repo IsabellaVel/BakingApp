@@ -36,6 +36,7 @@ public class RecipeStepActivity extends AppCompatActivity {
 
     public void attachSteps(Context context, Parcelable step) {
         mStepItem = getIntent().getParcelableExtra(RecipeDetailFragment.STEP_SELECTION);
+
         context = getBaseContext();
         Bundle bundle = new Bundle();
         bundle.putParcelable(RecipeDetailFragment.STEP_SELECTION, mStepItem);
@@ -69,8 +70,7 @@ public class RecipeStepActivity extends AppCompatActivity {
             finish();
             return;
         }
-
-       // attachSteps(getBaseContext(), mStepItem);
+        attachSteps(getBaseContext(), mStepItem);
         //attachStepsFromRecipe(getBaseContext(), recipeItem);
 
         StepsPlayFragment stepsPlayFragment =

@@ -134,7 +134,9 @@ public class StepsPlayFragment extends Fragment implements Player.EventListener 
 
         bakingStepList = RecipeDetailFragment.getListOfSteps();
         if (savedInstanceState != null) {
-            playbackPosition = savedInstanceState.getLong(VIDEO_POSITION, mExoPlayer.getCurrentPosition());
+            if (stepVideoUrl != null && !stepVideoUrl.isEmpty()) {
+                playbackPosition = savedInstanceState.getLong(VIDEO_POSITION, mExoPlayer.getCurrentPosition());
+            }
         }
 
         return view;
@@ -368,8 +370,8 @@ public class StepsPlayFragment extends Fragment implements Player.EventListener 
         super.onStart();
         if (Util.SDK_INT > 23) {
             if (stepVideoUrl != null && !stepVideoUrl.isEmpty()) {
-               //initializeMediaSession();
-               //initializePlayer(Uri.parse(stepVideoUrl));
+                //initializeMediaSession();
+                //initializePlayer(Uri.parse(stepVideoUrl));
             }
         }
     }
@@ -446,6 +448,6 @@ public class StepsPlayFragment extends Fragment implements Player.EventListener 
     }
 
     public int getShownIndex() {
-        return getArguments().getInt(INDEX_POSITION, 0);
+        return getArguments().getInt(INDEX_POSITION);
     }
 }

@@ -102,10 +102,8 @@ public class RecipeListFragment extends Fragment implements LoaderManager.Loader
 
                         Intent showDetailsRecipe = new Intent(getActivity().getBaseContext(), RecipeDetailActivity.class);
                         showDetailsRecipe.putExtra(RECIPE_SELECTION, thisRecipe);
-                        getActivity().startActivityForResult(showDetailsRecipe, REQUEST_CODE);
-
+                        getActivity().startActivity(showDetailsRecipe);
                     }
-
                 }));
 
         //setup the adapter

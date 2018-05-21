@@ -35,7 +35,7 @@ public class RecipeDetailActivity extends AppCompatActivity {
 
     public RecipeContent mRecipeDetails;
 
-    public void sendData(Context context, Parcelable object) {
+    public RecipeDetailFragment sendData(Context context, Parcelable object) {
         context = getBaseContext();
         Bundle bundle = new Bundle();
         bundle.putParcelable(RecipeListFragment.RECIPE_SELECTION, mRecipeDetails);
@@ -45,6 +45,8 @@ public class RecipeDetailActivity extends AppCompatActivity {
         getSupportFragmentManager().beginTransaction()
                 .add(R.id.fragment_details_container, recipeDetailFragment)
                 .commit();
+
+        return recipeDetailFragment;
     }
 
     @Override
@@ -87,11 +89,7 @@ public class RecipeDetailActivity extends AppCompatActivity {
             // activity should be in two-pane mode.
             mTwoPane = true;
             sendData(mContext, mRecipeDetails);
-            /**  RecipeDetailFragment recipeDetailFragment = new RecipeDetailFragment();
-             getSupportFragmentManager().beginTransaction()
-             .add(R.id.fragment_details_container, recipeDetailFragment)
-             .commit();
-             **/
+
             // TODO Add fragment for Video and steps instructions
             StepsPlayFragment recipeStepsFragment = new StepsPlayFragment();
             getSupportFragmentManager().beginTransaction()

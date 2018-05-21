@@ -112,19 +112,6 @@ public class RecipeStepsAdapter extends RecyclerView.Adapter<RecipeStepsAdapter.
 
     }
 
-    public void toNext(View view, int position) {
-        adapterPosition = position;
-        adapterPosition = adapterPosition + 1;
-        onBindViewHolder(viewHolder, adapterPosition);
-    }
-
-
-    public void toPrevious(View view, int position) {
-        adapterPosition = position;
-        adapterPosition = adapterPosition - 1;
-        onBindViewHolder(viewHolder, adapterPosition);
-    }
-
 
     public void clear() {
         stepList.clear();

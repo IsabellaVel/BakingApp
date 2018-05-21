@@ -89,19 +89,19 @@ public class RecipeDetailFragment extends Fragment {
         recipeStepsAdapter = new RecipeStepsAdapter(getActivity(), mBakingSteps, onStepClickListener);
 
         //remove this code to test fragment initialization
-        /**layoutManager = new LinearLayoutManager(getContext());
-         mRecipeStepsRecyclerView.setLayoutManager(layoutManager);
+        layoutManager = new LinearLayoutManager(getContext());
+        mRecipeStepsRecyclerView.setLayoutManager(layoutManager);
 
-         recipeStepsAdapter.setHasStableIds(true);
-         mRecipeStepsRecyclerView.setHasFixedSize(true);
-         mRecipeStepsRecyclerView.setAdapter(recipeStepsAdapter);
-         **/
+        recipeStepsAdapter.setHasStableIds(true);
+        mRecipeStepsRecyclerView.setHasFixedSize(true);
+        mRecipeStepsRecyclerView.setAdapter(recipeStepsAdapter);
+
         View stepsPlayFrame = getActivity().findViewById(R.id.frame_recycler);
         mTwoPane = stepsPlayFrame != null && stepsPlayFrame.getVisibility() == View.VISIBLE;
 
         if (savedInstanceState != null) {
-            mStepItem = savedInstanceState.getParcelable(STEP_SELECTION);
             mCurrCheckedPosition = savedInstanceState.getInt(STEP_SELECTION);
+
 
             if (mTwoPane) {
                 showStepsPlayer(mCurrCheckedPosition);
@@ -117,26 +117,21 @@ public class RecipeDetailFragment extends Fragment {
 
             StepsPlayFragment stepsPlayerFragment = (StepsPlayFragment)
                     getFragmentManager().findFragmentById(R.id.frame_recycler);
-            if (stepsPlayerFragment == null || stepsPlayerFragment.getShownIndex() != index) {
+            if (stepsPlayerFragment == null)
+                //|| stepsPlayerFragment.getShownIndex() != index) {
                 stepsPlayerFragment = StepsPlayFragment.newInstance(index);
 
-                android.support.v4.app.FragmentTransaction fragmentTransaction = getFragmentManager()
-                        .beginTransaction();
-                if (index == 0) {
-                    fragmentTransaction.replace(R.id.frame_recycler, stepsPlayerFragment);
-                }else {
-                    fragmentTransaction.replace(R.id.frame_recycler, stepsPlayerFragment);
-                }
+            android.support.v4.app.FragmentTransaction fragmentTransaction = getFragmentManager()
+                    .beginTransaction();
 
-                fragmentTransaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE);
-                fragmentTransaction.commit();
-            } else {
-                setUpRecyclerListener(mRecipeStepsRecyclerView);
-                Intent intent = new Intent();
-                intent.setClass(getActivity(), RecipeStepActivity.class);
-                intent.putExtra(INDEX_POSITION, index);
-                startActivity(intent);
-            }
+            fragmentTransaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE);
+            fragmentTransaction.commit();
+        } else {
+            setUpRecyclerListener(mRecipeStepsRecyclerView);
+            Intent intent = new Intent();
+            intent.setClass(getActivity(), RecipeStepActivity.class);
+            intent.putExtra(INDEX_POSITION, index);
+            startActivity(intent);
         }
     }
 
@@ -147,10 +142,10 @@ public class RecipeDetailFragment extends Fragment {
         Bundle args = getArguments();
         if (args != null) {
             RecipeContent recipeContent = args.getParcelable(RECIPE_SELECTION);
-            mCurrCheckedPosition = recipeContent.getId();
+            assert recipeContent != null;
             mBakingSteps = recipeContent.getBakingSteps();
-        }
 
+        }
 
         Activity activity = this.getActivity();
         CollapsingToolbarLayout appBarLayout = (CollapsingToolbarLayout) activity.findViewById(R.id.toolbar_layout);
@@ -166,12 +161,13 @@ public class RecipeDetailFragment extends Fragment {
         super.onCreate(savedInstanceState);
 
         View rootView = inflater.inflate(R.layout.fragment_recipe_details, container, false);
+
         unbinder = ButterKnife.bind(this, rootView);
 
 
         recipeStepsAdapter = new RecipeStepsAdapter(getActivity(), mBakingSteps, onStepClickListener);
 
-        layoutManager = new LinearLayoutManager(getContext());
+        /*layoutManager = new LinearLayoutManager(getContext());
         mRecipeStepsRecyclerView.setLayoutManager(layoutManager);
 
         recipeStepsAdapter.setHasStableIds(true);
@@ -180,10 +176,10 @@ public class RecipeDetailFragment extends Fragment {
 
         mRecipeStepsRecyclerView.addItemDecoration(new DividerItemDecoration(getContext(),
                 DividerItemDecoration.VERTICAL));
-
+**/
         setUpRecyclerListener(mRecipeStepsRecyclerView);
 
-        if (mBakingSteps != null && !mBakingSteps.isEmpty()) {
+        if (mBakingSteps != null && mBakingSteps.isEmpty()) {
             recipeStepsAdapter.addAll(mBakingSteps);
             Log.e(LOG_TAG, "Successful LoadFinished for List of Steps per Recipe.");
 
