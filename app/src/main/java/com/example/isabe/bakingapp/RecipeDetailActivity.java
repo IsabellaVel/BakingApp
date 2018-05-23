@@ -6,7 +6,6 @@ import android.os.Parcelable;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.view.View;
 import android.widget.TextView;
 
 import com.example.isabe.bakingapp.objects.BakingStep;
@@ -16,7 +15,6 @@ import com.example.isabe.bakingapp.objects.RecipeContent;
 import java.util.List;
 
 import butterknife.BindView;
-import butterknife.OnClick;
 
 /**
  * An activity representing a single Recipe detail screen. This
@@ -64,8 +62,7 @@ public class RecipeDetailActivity extends AppCompatActivity {
 
         if (savedInstanceState != null) {
             mRecipeDetails = savedInstanceState.getParcelable(RecipeListFragment.RECIPE_SELECTION);
-            sendData(getBaseContext(), mRecipeDetails);
-        }
+        }else {
 
         mRecipeDetails = getIntent().getParcelableExtra(RecipeListFragment.RECIPE_SELECTION);
         int recipeId = mRecipeDetails.getId();
@@ -88,7 +85,7 @@ public class RecipeDetailActivity extends AppCompatActivity {
             // If this view is present, then the
             // activity should be in two-pane mode.
             mTwoPane = true;
-            sendData(mContext, mRecipeDetails);
+            //sendData(mContext, mRecipeDetails);
 
             // TODO Add fragment for Video and steps instructions
             StepsPlayFragment recipeStepsFragment = new StepsPlayFragment();
@@ -98,10 +95,9 @@ public class RecipeDetailActivity extends AppCompatActivity {
 
         }
 
-    }
+    }}
 
-    @OnClick(R.id.ingreds_details)
-    public void showDetails(View view) {
+    public void showIngreds(List<Ingredient> ingredients) {
     }
 
     /**@Override public boolean onOptionsItemSelected(MenuItem item) {

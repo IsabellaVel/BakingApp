@@ -240,6 +240,13 @@ public class StepsPlayFragment extends Fragment implements Player.EventListener 
 
     }
 
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+
+        outState.putInt(EXTRA_STEP_ID, stepId);
+    }
+
     @OnClick(R.id.button_next)
     public void toNext() {
         try {

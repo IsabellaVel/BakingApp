@@ -7,7 +7,6 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.v4.app.Fragment;
-import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -100,12 +99,11 @@ public class RecipeDetailFragment extends Fragment {
         mTwoPane = stepsPlayFrame != null && stepsPlayFrame.getVisibility() == View.VISIBLE;
 
         if (savedInstanceState != null) {
-            mCurrCheckedPosition = savedInstanceState.getInt(STEP_SELECTION);
+            mCurrCheckedPosition = savedInstanceState.getInt(STEP_SELECTION, 0);
 
-
-            if (mTwoPane) {
-                showStepsPlayer(mCurrCheckedPosition);
-            }
+        }
+        if (mTwoPane) {
+            showStepsPlayer(mCurrCheckedPosition);
         }
     }
 
@@ -114,20 +112,22 @@ public class RecipeDetailFragment extends Fragment {
 
         if (mTwoPane) {
 
-
             StepsPlayFragment stepsPlayerFragment = (StepsPlayFragment)
                     getFragmentManager().findFragmentById(R.id.frame_recycler);
             if (stepsPlayerFragment == null)
-                //|| stepsPlayerFragment.getShownIndex() != index) {
+            //|| stepsPlayerFragment.getShownIndex() != index)
+            {
                 stepsPlayerFragment = StepsPlayFragment.newInstance(index);
 
-            android.support.v4.app.FragmentTransaction fragmentTransaction = getFragmentManager()
-                    .beginTransaction();
+                android.support.v4.app.FragmentTransaction fragmentTransaction = getFragmentManager()
+                        .beginTransaction();
+                fragmentTransaction.replace(R.id.frame_recycler, stepsPlayerFragment);
 
-            fragmentTransaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE);
-            fragmentTransaction.commit();
+                fragmentTransaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE);
+                fragmentTransaction.commit();
+                //setUpRecyclerListener(mRecipeStepsRecyclerView);
+            }
         } else {
-            setUpRecyclerListener(mRecipeStepsRecyclerView);
             Intent intent = new Intent();
             intent.setClass(getActivity(), RecipeStepActivity.class);
             intent.putExtra(INDEX_POSITION, index);
@@ -196,6 +196,9 @@ public class RecipeDetailFragment extends Fragment {
                     @Override
                     public void onClick(View view, int position) {
                         //TODO
+                        mCurrCheckedPosition = position;
+                        showStepsPlayer(mCurrCheckedPosition);
+
                         BakingStep thisRecipeStep = recipeStepsAdapter.getItem(position);
                         assert thisRecipeStep != null;
                         int thisRecipeId = thisRecipeStep.getId();

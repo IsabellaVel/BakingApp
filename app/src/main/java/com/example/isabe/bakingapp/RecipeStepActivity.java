@@ -13,6 +13,8 @@ import com.example.isabe.bakingapp.objects.RecipeContent;
 
 import java.util.List;
 
+import static com.example.isabe.bakingapp.RecipeDetailFragment.STEP_SELECTION;
+
 /**
  * Created by isabe on 5/13/2018.
  */
@@ -27,39 +29,26 @@ public class RecipeStepActivity extends AppCompatActivity {
     public static List<BakingStep> thisRecipeSteps;
     int stepId;
 
-    public static Intent createIntent(Context context, int recipeId, int stepId) {
+    public static Intent createIntent(Context context, int stepId) {
         Intent intent = new Intent(context, RecipeStepActivity.class);
-        intent.putExtra(RECIPE_ID, recipeId);
-        intent.putExtra(STEP_ID, stepId);
+        intent.putExtra(STEP_SELECTION, stepId);
         return intent;
     }
 
-    public void attachSteps(Context context, Parcelable step) {
-        mStepItem = getIntent().getParcelableExtra(RecipeDetailFragment.STEP_SELECTION);
-
+    public StepsPlayFragment attachSteps(Context context, Parcelable step) {
         context = getBaseContext();
+        mStepItem = (BakingStep) step;
         Bundle bundle = new Bundle();
-        bundle.putParcelable(RecipeDetailFragment.STEP_SELECTION, mStepItem);
+        bundle.putParcelable(STEP_SELECTION, mStepItem);
         StepsPlayFragment playFragment = new StepsPlayFragment();
         playFragment.setArguments(bundle);
 
         getSupportFragmentManager().beginTransaction()
                 .add(R.id.stepFragmentContainer, playFragment)
                 .commit();
+        return playFragment;
     }
 
-    /**
-     * public void attachStepsFromRecipe(Context context, Parcelable object){
-     * //add bundle for Recipe and extract stepList
-     * Bundle bundleSteps = new Bundle();
-     * bundleSteps.putParcelable(RecipeListFragment.RECIPE_SELECTION, recipeItem);
-     * StepsPlayFragment playFragment = new StepsPlayFragment();
-     * playFragment.setArguments(bundleSteps);
-     * getSupportFragmentManager().beginTransaction()
-     * .add(R.id.stepFragmentContainer, playFragment)
-     * .commit();
-     * }
-     **/
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -71,38 +60,25 @@ public class RecipeStepActivity extends AppCompatActivity {
             return;
         }
         attachSteps(getBaseContext(), mStepItem);
-        //attachStepsFromRecipe(getBaseContext(), recipeItem);
 
-        StepsPlayFragment stepsPlayFragment =
-                (StepsPlayFragment) getSupportFragmentManager()
-                        .findFragmentById(R.id.stepFragmentContainer);
-
-        if (savedInstanceState != null) {
-        //    recipeItem = savedInstanceState.getParcelable(RecipeListFragment.RECIPE_SELECTION);
-            mStepItem = savedInstanceState.getParcelable(RecipeDetailFragment.STEP_SELECTION);
-        }
-
-
-        mStepItem = getIntent().getParcelableExtra(RecipeDetailFragment.STEP_SELECTION);
+        mStepItem = getIntent().getParcelableExtra(STEP_SELECTION);
         int stepParcelId = mStepItem.getId();
         String stepShortName = mStepItem.getBriefStepDescription();
         String stepLongDesc = mStepItem.getLongStepDescription();
         String stepVideoUrl = mStepItem.getVideoUrl();
         String stepImageUrl = mStepItem.getThumbnailStepUrl();
 
-        stepParcelId = getIntent().getIntExtra(STEP_ID, stepId);
+        thisRecipeSteps = RecipeDetailFragment.getListOfSteps();
+
+        if (savedInstanceState != null) {
+            stepParcelId = getIntent().getIntExtra(STEP_SELECTION, stepId);
+            StepsPlayFragment.newInstance(stepParcelId);
+        }
+
 
         //add parcelable for steps of recipe
         //   recipeItem = getIntent().getParcelableExtra(RecipeListFragment.RECIPE_SELECTION);
-        thisRecipeSteps = RecipeDetailFragment.getListOfSteps();
-
-
-        if (savedInstanceState == null) {
-            mStepItem = getIntent().getParcelableExtra(RecipeDetailFragment.STEP_SELECTION);
-            attachSteps(getBaseContext(), mStepItem);
-//        attachStepsFromRecipe(getBaseContext(), recipeItem);
-        }
-    }
+     }
 
 
 }

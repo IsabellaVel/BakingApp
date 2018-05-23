@@ -112,7 +112,6 @@ public class RecipeStepsAdapter extends RecyclerView.Adapter<RecipeStepsAdapter.
 
     }
 
-
     public void clear() {
         stepList.clear();
     }
