@@ -49,7 +49,8 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import butterknife.Unbinder;
 
-import static com.example.isabe.bakingapp.RecipeDetailFragment.INDEX_POSITION;
+import static com.example.isabe.bakingapp.RecipeDetailFragment.STEP_INDEX;
+import static com.example.isabe.bakingapp.RecipeDetailFragment.STEP_SELECTION;
 
 /**
  * Created by isabe on 5/9/2018.
@@ -61,7 +62,7 @@ public class StepsPlayFragment extends Fragment implements Player.EventListener 
     private ExoPlayer mExoPlayer;
     private PlayerView mExoPlayerView;
     private List<BakingStep> bakingStepList = new ArrayList<>();
-    private BakingStep stepItem;
+    private static BakingStep stepItem;
 
     @BindView(R.id.step_video)
     PlayerView mStepVideo;
@@ -105,7 +106,7 @@ public class StepsPlayFragment extends Fragment implements Player.EventListener 
 
     public static StepsPlayFragment newInstance(int index) {
         Bundle args = new Bundle();
-        args.putInt(INDEX_POSITION, index);
+        args.putParcelable(STEP_INDEX, stepItem);
         StepsPlayFragment exoPlayFragment = new StepsPlayFragment();
         exoPlayFragment.setArguments(args);
         return exoPlayFragment;
@@ -455,6 +456,11 @@ public class StepsPlayFragment extends Fragment implements Player.EventListener 
     }
 
     public int getShownIndex() {
-        return getArguments().getInt(INDEX_POSITION);
+        int id;
+        if (getArguments() != null) {
+            return id = getArguments().getInt(STEP_SELECTION);
+        } else {
+            return 0;
+        }
     }
 }

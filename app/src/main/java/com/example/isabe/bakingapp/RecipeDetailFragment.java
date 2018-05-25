@@ -24,6 +24,7 @@ import com.example.isabe.bakingapp.objects.RecipeContent;
 import java.util.ArrayList;
 import java.util.List;
 
+import butterknife.BindBool;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
@@ -40,7 +41,7 @@ public class RecipeDetailFragment extends Fragment {
     private static final String LOG_TAG = RecipeDetailFragment.class.getSimpleName();
     private Unbinder unbinder;
     public static final String STEP_SELECTION = "STEP_ID";
-    public static final String INDEX_POSITION = "index";
+    public static final String STEP_INDEX = "index";
 
     private RecipeStepsAdapter recipeStepsAdapter;
     private RecipeListAdapter mRecipeAdapter;
@@ -53,8 +54,8 @@ public class RecipeDetailFragment extends Fragment {
     @BindView(R.id.recipe_steps_list_rv)
     RecyclerView mRecipeStepsRecyclerView;
     public LinearLayoutManager layoutManager;
-
-    private boolean mTwoPane;
+    @BindBool(R.bool.two_pane_mode)
+    boolean mTwoPane;
     private int mCurrCheckedPosition = 0;
     private BakingStep mStepItem;
 
@@ -78,7 +79,7 @@ public class RecipeDetailFragment extends Fragment {
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
 
-        outState.putInt(STEP_SELECTION, mCurrCheckedPosition);
+        outState.putInt(STEP_INDEX, mCurrCheckedPosition);
     }
 
     @Override
@@ -99,29 +100,33 @@ public class RecipeDetailFragment extends Fragment {
         mTwoPane = stepsPlayFrame != null && stepsPlayFrame.getVisibility() == View.VISIBLE;
 
         if (savedInstanceState != null) {
-            mCurrCheckedPosition = savedInstanceState.getInt(STEP_SELECTION, 0);
+            mCurrCheckedPosition = savedInstanceState.getInt(STEP_INDEX, 0);
 
         }
-        if (mTwoPane) {
+        if (mTwoPane = false) {
+            mCurrCheckedPosition = getArguments().getInt(STEP_INDEX);
+            mStepItem = getArguments().getParcelable(STEP_SELECTION);
+            StepsPlayFragment stepsPlayFragment = StepsPlayFragment.newInstance(mCurrCheckedPosition);
             showStepsPlayer(mCurrCheckedPosition);
         }
     }
 
     private void showStepsPlayer(int index) {
         mCurrCheckedPosition = index;
-
-        if (mTwoPane) {
-
+        if (mTwoPane = false) {
             StepsPlayFragment stepsPlayerFragment = (StepsPlayFragment)
                     getFragmentManager().findFragmentById(R.id.frame_recycler);
-            if (stepsPlayerFragment == null)
-            //|| stepsPlayerFragment.getShownIndex() != index)
-            {
+            if (stepsPlayerFragment == null || stepsPlayerFragment.getShownIndex() != index) {
                 stepsPlayerFragment = StepsPlayFragment.newInstance(index);
 
                 android.support.v4.app.FragmentTransaction fragmentTransaction = getFragmentManager()
                         .beginTransaction();
-                fragmentTransaction.replace(R.id.frame_recycler, stepsPlayerFragment);
+
+                if (index == 0) {
+                    fragmentTransaction.replace(R.id.frame_recycler, stepsPlayerFragment);
+                } else {
+                    fragmentTransaction.replace(R.id.frame_recycler, stepsPlayerFragment);
+                }
 
                 fragmentTransaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE);
                 fragmentTransaction.commit();
@@ -130,7 +135,7 @@ public class RecipeDetailFragment extends Fragment {
         } else {
             Intent intent = new Intent();
             intent.setClass(getActivity(), RecipeStepActivity.class);
-            intent.putExtra(INDEX_POSITION, index);
+            intent.putExtra(STEP_INDEX, index);
             startActivity(intent);
         }
     }
@@ -197,7 +202,6 @@ public class RecipeDetailFragment extends Fragment {
                     public void onClick(View view, int position) {
                         //TODO
                         mCurrCheckedPosition = position;
-                        showStepsPlayer(mCurrCheckedPosition);
 
                         BakingStep thisRecipeStep = recipeStepsAdapter.getItem(position);
                         assert thisRecipeStep != null;
@@ -206,6 +210,8 @@ public class RecipeDetailFragment extends Fragment {
                         String thisStepLongDesc = thisRecipeStep.getLongStepDescription();
                         String thisStepVideoUrl = thisRecipeStep.getVideoUrl();
                         String thisStepImageUrl = thisRecipeStep.thumbnailStepUrl;
+
+                        showStepsPlayer(mCurrCheckedPosition);
 
                         Fragment exoPlayerFragment = new StepsPlayFragment();
                         Bundle bundle = new Bundle();
