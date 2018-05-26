@@ -1,6 +1,5 @@
 package com.example.isabe.bakingapp;
 
-import android.content.Context;
 import android.content.res.Configuration;
 import android.net.Uri;
 import android.os.Build;
@@ -11,12 +10,10 @@ import android.support.v4.app.Fragment;
 import android.support.v4.media.session.MediaControllerCompat;
 import android.support.v4.media.session.MediaSessionCompat;
 import android.support.v4.media.session.PlaybackStateCompat;
-import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -44,6 +41,7 @@ import com.google.android.exoplayer2.util.Util;
 import java.util.ArrayList;
 import java.util.List;
 
+import butterknife.BindBool;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
@@ -60,7 +58,6 @@ public class StepsPlayFragment extends Fragment implements Player.EventListener 
     private static final String LOG_TAG = StepsPlayFragment.class.getSimpleName();
     private static final java.lang.String VIDEO_POSITION = "position_video";
     private ExoPlayer mExoPlayer;
-    private PlayerView mExoPlayerView;
     private List<BakingStep> bakingStepList = new ArrayList<>();
     private static BakingStep stepItem;
 
@@ -97,6 +94,8 @@ public class StepsPlayFragment extends Fragment implements Player.EventListener 
     private int currentWindowIndex = 0;
     private RecipeStepsAdapter mRecipeAdapter;
     private long playbackPosition = 0;
+    @BindBool(R.bool.isTablet)
+    boolean tabletSize;
 
     Unbinder unbinder;
 
@@ -139,7 +138,8 @@ public class StepsPlayFragment extends Fragment implements Player.EventListener 
 
         bakingStepList = RecipeDetailFragment.getListOfSteps();
         if (savedInstanceState != null) {
-            if (stepVideoUrl != null && !stepVideoUrl.isEmpty()) {
+
+            if (stepVideoUrl != null && !stepVideoUrl.isEmpty() && mExoPlayer !=null) {
                 playbackPosition = savedInstanceState.getLong(VIDEO_POSITION, mExoPlayer.getCurrentPosition());
             }
         }
@@ -165,7 +165,7 @@ public class StepsPlayFragment extends Fragment implements Player.EventListener 
 
             int configOrientation = getResources().getConfiguration().orientation;
 
-            if (configOrientation == Configuration.ORIENTATION_LANDSCAPE && !mTwoPane) {
+            if (configOrientation == Configuration.ORIENTATION_LANDSCAPE && !tabletSize) {
                 expandVideoFullScreen(mStepVideo);
                 mDetailedInstructions.setVisibility(View.GONE);
                 hideSystemUI();
@@ -250,6 +250,7 @@ public class StepsPlayFragment extends Fragment implements Player.EventListener 
         super.onSaveInstanceState(outState);
 
         outState.putInt(EXTRA_STEP_ID, stepId);
+
     }
 
     public void getObject() {
@@ -261,7 +262,7 @@ public class StepsPlayFragment extends Fragment implements Player.EventListener 
     @OnClick(R.id.button_next)
     public void toNext() {
         try {
-            //getObject();
+           // getObject();
             stepId = stepItem.getId();
             stepId = stepId + 1;
 
@@ -315,20 +316,10 @@ public class StepsPlayFragment extends Fragment implements Player.EventListener 
     }
 
     private void expandVideoFullScreen(PlayerView playerView) {
-        DisplayMetrics metrics = new DisplayMetrics();
-        ((WindowManager) getContext().getSystemService(Context.WINDOW_SERVICE))
-                .getDefaultDisplay().getMetrics(metrics);
-        android.widget.LinearLayout.LayoutParams params = (android.widget.LinearLayout.LayoutParams)
-                mStepVideo.getLayoutParams();
-        params.width = metrics.widthPixels;
-        params.height = metrics.heightPixels;
-        params.leftMargin = 0;
+        ViewGroup.LayoutParams params = mStepVideo.getLayoutParams();
+        params.width = ViewGroup.LayoutParams.MATCH_PARENT;
+        params.height = ViewGroup.LayoutParams.MATCH_PARENT;
         mStepVideo.setLayoutParams(params);
-    }
-
-    public void testExpand(PlayerView playerView) {
-        playerView.getLayoutParams().height = ViewGroup.LayoutParams.MATCH_PARENT;
-        playerView.getLayoutParams().width = ViewGroup.LayoutParams.MATCH_PARENT;
     }
 
     private void initializePlayer(Uri videoUri) {

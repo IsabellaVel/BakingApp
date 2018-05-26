@@ -6,12 +6,18 @@ import android.content.res.Configuration;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.support.annotation.Nullable;
+import android.support.v4.app.NavUtils;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
+import android.view.MenuItem;
 
 import com.example.isabe.bakingapp.objects.BakingStep;
 import com.example.isabe.bakingapp.objects.RecipeContent;
 
 import java.util.List;
+
+import butterknife.BindBool;
 
 import static com.example.isabe.bakingapp.RecipeDetailFragment.STEP_SELECTION;
 
@@ -55,12 +61,19 @@ public class RecipeStepActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.activity_step);
-        if (getResources().getConfiguration().orientation
-                == Configuration.ORIENTATION_LANDSCAPE) {
-            finish();
-            return;
+
+        // Show the Up button in the action bar.
+        ActionBar actionBar = getSupportActionBar();
+        if (actionBar != null) {
+            actionBar.setDisplayHomeAsUpEnabled(true);
         }
 
+        /**    if (getResources().getConfiguration().orientation
+         == Configuration.ORIENTATION_LANDSCAPE) {
+         finish();
+         return;
+         }
+         **/
         mStepItem = getIntent().getParcelableExtra(STEP_SELECTION);
 
         int stepParcelId = mStepItem.getId();
@@ -73,22 +86,35 @@ public class RecipeStepActivity extends AppCompatActivity {
 
         thisRecipeSteps = RecipeDetailFragment.getListOfSteps();
 
-        if(savedInstanceState == null){
+        /**if (savedInstanceState == null) {
             StepsPlayFragment stepsPlayFragment = new StepsPlayFragment();
             stepsPlayFragment.setArguments(getIntent().getExtras());
             getSupportFragmentManager().beginTransaction().add(R.id.stepFragmentContainer, stepsPlayFragment)
                     .commit();
         }
+         **/
         if (savedInstanceState != null) {
-         mStepItem = getIntent().getParcelableExtra(STEP_SELECTION);
+            mStepItem = getIntent().getParcelableExtra(STEP_SELECTION);
 
-         stepParcelId = getIntent().getIntExtra(STEP_ID, DEFAULT_STEP_ID);
-         StepsPlayFragment.newInstance(stepParcelId);
-         }
+            stepParcelId = getIntent().getIntExtra(STEP_ID, DEFAULT_STEP_ID);
+            StepsPlayFragment.newInstance(stepParcelId);
+        }
 
 
         //add parcelable for steps of recipe
         recipeItem = getIntent().getParcelableExtra(RecipeListFragment.RECIPE_SELECTION);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.homeAsUp:
+                mStepItem = getIntent().getParcelableExtra(STEP_SELECTION);
+                NavUtils.navigateUpFromSameTask(this);
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
     }
 
 

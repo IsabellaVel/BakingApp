@@ -67,6 +67,9 @@ public class RecipeDetailFragment extends Fragment {
     @BindString(R.string.recipe_ingredients)
     String stIngredsHeader;
     private IngredientsAdapter mIngredientsAdapter;
+    @BindBool(R.bool.isTablet)
+    boolean tabletSize;
+
 
     int ingredId;
 
@@ -213,7 +216,7 @@ public class RecipeDetailFragment extends Fragment {
 
         StringBuilder stringBuilder = new StringBuilder();
         stIngredsHeader = "<b>" + "Recipe Ingredients: " + "<b> ";
-      //  stringBuilder.append(Html.fromHtml(stIngredsHeader));
+        //  stringBuilder.append(Html.fromHtml(stIngredsHeader));
         for (int iIngred = 0; iIngred < mIngredients.size(); iIngred++) {
 
             mIngredItem = ingreds.get(iIngred);
@@ -244,20 +247,24 @@ public class RecipeDetailFragment extends Fragment {
                         String thisStepShortDesc = thisRecipeStep.getBriefStepDescription();
                         String thisStepLongDesc = thisRecipeStep.getLongStepDescription();
                         String thisStepVideoUrl = thisRecipeStep.getVideoUrl();
-                        String thisStepImageUrl = thisRecipeStep.thumbnailStepUrl;
+                        String thisStepImageUrl = thisRecipeStep.getThumbnailStepUrl();
 
-                       showStepsPlayer(mCurrCheckedPosition);
+                        if (tabletSize) {
+                            showStepsPlayer(mCurrCheckedPosition);
+                            Fragment exoPlayerFragment = new StepsPlayFragment();
+                            Bundle bundle = new Bundle();
+                            bundle.putParcelable(STEP_SELECTION, thisRecipeStep);
+                            exoPlayerFragment.setArguments(bundle);
+                        } else {
+                            thisRecipeStep = recipeStepsAdapter.getItem(position);
+                            assert thisRecipeStep != null;
 
-                        Fragment exoPlayerFragment = new StepsPlayFragment();
-                        Bundle bundle = new Bundle();
-                        bundle.putParcelable(STEP_SELECTION, thisRecipeStep);
-                        exoPlayerFragment.setArguments(bundle);
+                            Intent showStepsDetails = new Intent(getActivity().getBaseContext(),
+                                    RecipeStepActivity.class);
+                            showStepsDetails.putExtra(STEP_SELECTION, thisRecipeStep);
+                            getActivity().startActivity(showStepsDetails);
 
-                        Intent showStepsDetails = new Intent(getActivity().getBaseContext(),
-                                RecipeStepActivity.class);
-                        showStepsDetails.putExtra(STEP_SELECTION, thisRecipeStep);
-                        getActivity().startActivity(showStepsDetails);
-
+                        }
                     }
                 }));
 

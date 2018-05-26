@@ -29,8 +29,10 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.example.isabe.bakingapp.RecipeListActivity" />
         </activity>
-        <activity android:name=".RecipeStepActivity"
-            android:label="@string/title_step_activity"/>
+        <activity
+            android:name=".RecipeStepActivity"
+            android:label="@string/title_step_activity"
+            android:parentActivityName=".RecipeDetailActivity" />
     </application>
 
 </manifest>
