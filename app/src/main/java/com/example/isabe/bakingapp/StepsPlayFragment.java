@@ -125,6 +125,10 @@ public class StepsPlayFragment extends Fragment implements Player.EventListener 
             stepVideoUrl = stepItem.getVideoUrl();
             stepImageUrl = stepItem.getThumbnailStepUrl();
         }
+
+        if(savedInstanceState != null){
+            stepId = savedInstanceState.getInt(EXTRA_STEP_ID);
+        }
     }
 
 
@@ -248,9 +252,16 @@ public class StepsPlayFragment extends Fragment implements Player.EventListener 
         outState.putInt(EXTRA_STEP_ID, stepId);
     }
 
+    public void getObject() {
+        if (getArguments() != null) {
+            stepItem = getArguments().getParcelable(RecipeDetailFragment.STEP_SELECTION);
+        }
+    }
+
     @OnClick(R.id.button_next)
     public void toNext() {
         try {
+            //getObject();
             stepId = stepItem.getId();
             stepId = stepId + 1;
 
@@ -278,6 +289,7 @@ public class StepsPlayFragment extends Fragment implements Player.EventListener 
     @OnClick(R.id.button_previous)
     public void toPrevious() {
         if (stepId > 0) {
+           // getObject();
             stepId = stepItem.getId();
             stepId = stepId - 1;
 

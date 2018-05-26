@@ -15,21 +15,25 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import com.example.isabe.bakingapp.adapters.IngredientsAdapter;
 import com.example.isabe.bakingapp.adapters.RecipeListAdapter;
 import com.example.isabe.bakingapp.adapters.RecipeStepsAdapter;
 import com.example.isabe.bakingapp.adapters.RecyclerTouchListener;
 import com.example.isabe.bakingapp.objects.BakingStep;
+import com.example.isabe.bakingapp.objects.Ingredient;
 import com.example.isabe.bakingapp.objects.RecipeContent;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.BindBool;
+import butterknife.BindString;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
 
 import static com.example.isabe.bakingapp.RecipeListFragment.RECIPE_SELECTION;
+import static com.example.isabe.bakingapp.adapters.IngredientsAdapter.formatIngredient;
 
 /**
  * A fragment representing a single Recipe detail screen.
@@ -46,6 +50,8 @@ public class RecipeDetailFragment extends Fragment {
     private RecipeStepsAdapter recipeStepsAdapter;
     private RecipeListAdapter mRecipeAdapter;
     private static List<BakingStep> mBakingSteps = new ArrayList<>();
+    private List<Ingredient> mIngredients = new ArrayList<>();
+    private Ingredient mIngredItem;
 
     private RecyclerTouchListener onStepClickListener;
     @BindView(R.id.ingreds_details)
@@ -58,6 +64,11 @@ public class RecipeDetailFragment extends Fragment {
     boolean mTwoPane;
     private int mCurrCheckedPosition = 0;
     private BakingStep mStepItem;
+    @BindString(R.string.recipe_ingredients)
+    String stIngredsHeader;
+    private IngredientsAdapter mIngredientsAdapter;
+
+    int ingredId;
 
     public static RecipeDetailFragment newInstance(int recipeNo) {
         RecipeDetailFragment recipeDetailFragment = new RecipeDetailFragment();
@@ -103,17 +114,17 @@ public class RecipeDetailFragment extends Fragment {
             mCurrCheckedPosition = savedInstanceState.getInt(STEP_INDEX, 0);
 
         }
-        if (mTwoPane = false) {
+        if (mTwoPane == false) {
             mCurrCheckedPosition = getArguments().getInt(STEP_INDEX);
             mStepItem = getArguments().getParcelable(STEP_SELECTION);
-            StepsPlayFragment stepsPlayFragment = StepsPlayFragment.newInstance(mCurrCheckedPosition);
             showStepsPlayer(mCurrCheckedPosition);
         }
+
     }
 
     private void showStepsPlayer(int index) {
         mCurrCheckedPosition = index;
-        if (mTwoPane = false) {
+        if (mTwoPane == false) {
             StepsPlayFragment stepsPlayerFragment = (StepsPlayFragment)
                     getFragmentManager().findFragmentById(R.id.frame_recycler);
             if (stepsPlayerFragment == null || stepsPlayerFragment.getShownIndex() != index) {
@@ -149,6 +160,8 @@ public class RecipeDetailFragment extends Fragment {
             RecipeContent recipeContent = args.getParcelable(RECIPE_SELECTION);
             assert recipeContent != null;
             mBakingSteps = recipeContent.getBakingSteps();
+            mIngredients = recipeContent.getIngredients();
+
 
         }
 
@@ -183,6 +196,7 @@ public class RecipeDetailFragment extends Fragment {
                 DividerItemDecoration.VERTICAL));
 **/
         setUpRecyclerListener(mRecipeStepsRecyclerView);
+        showIngredients(mIngredients);
 
         if (mBakingSteps != null && mBakingSteps.isEmpty()) {
             recipeStepsAdapter.addAll(mBakingSteps);
@@ -191,6 +205,27 @@ public class RecipeDetailFragment extends Fragment {
         }
 
         return rootView;
+    }
+
+    public void showIngredients(List<Ingredient> ingreds) {
+        mIngredientsAdapter = new IngredientsAdapter(getActivity(), ingreds);
+        mIngredientsAdapter.setHasStableIds(true);
+
+        StringBuilder stringBuilder = new StringBuilder();
+        stIngredsHeader = "<b>" + "Recipe Ingredients: " + "<b> ";
+      //  stringBuilder.append(Html.fromHtml(stIngredsHeader));
+        for (int iIngred = 0; iIngred < mIngredients.size(); iIngred++) {
+
+            mIngredItem = ingreds.get(iIngred);
+
+            String nameIngredient = mIngredItem.getIngredientName();
+            float qty = mIngredItem.getQuantityIngredient();
+            String uMeasure = mIngredItem.getUnit();
+            stringBuilder.append("\n");
+            stringBuilder.append(formatIngredient(getContext(), nameIngredient, qty, uMeasure));
+        }
+        tvRecipeIngreds.setText(stringBuilder.toString());
+
     }
 
     public void setUpRecyclerListener(RecyclerView recyclerListener) {
@@ -211,7 +246,7 @@ public class RecipeDetailFragment extends Fragment {
                         String thisStepVideoUrl = thisRecipeStep.getVideoUrl();
                         String thisStepImageUrl = thisRecipeStep.thumbnailStepUrl;
 
-                        showStepsPlayer(mCurrCheckedPosition);
+                       showStepsPlayer(mCurrCheckedPosition);
 
                         Fragment exoPlayerFragment = new StepsPlayFragment();
                         Bundle bundle = new Bundle();
@@ -236,6 +271,10 @@ public class RecipeDetailFragment extends Fragment {
 
     public static List<BakingStep> getListOfSteps() {
         return mBakingSteps;
+    }
+
+    public List<Ingredient> getmIngredients() {
+        return mIngredients;
     }
 
 }
