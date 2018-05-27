@@ -118,18 +118,20 @@ public class RecipeDetailFragment extends Fragment {
 
         }
         if (mTwoPane == false) {
-            mCurrCheckedPosition = getArguments().getInt(STEP_INDEX);
-            mStepItem = getArguments().getParcelable(STEP_SELECTION);
             showStepsPlayer(mCurrCheckedPosition);
+            Log.i(LOG_TAG, "Single pane mode reached.");
+        } else if (tabletSize) {
+            Log.i(LOG_TAG, "Dual mode reached from tabletSize.");
         }
-
     }
+
 
     private void showStepsPlayer(int index) {
         mCurrCheckedPosition = index;
         if (mTwoPane == false) {
             StepsPlayFragment stepsPlayerFragment = (StepsPlayFragment)
                     getFragmentManager().findFragmentById(R.id.frame_recycler);
+
             if (stepsPlayerFragment == null || stepsPlayerFragment.getShownIndex() != index) {
                 stepsPlayerFragment = StepsPlayFragment.newInstance(index);
 
@@ -144,15 +146,12 @@ public class RecipeDetailFragment extends Fragment {
 
                 fragmentTransaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE);
                 fragmentTransaction.commit();
-                //setUpRecyclerListener(mRecipeStepsRecyclerView);
+                Log.i(LOG_TAG, "ShowStepsPlayer functioning.");
             }
         } else {
-            Intent intent = new Intent();
-            intent.setClass(getActivity(), RecipeStepActivity.class);
-            intent.putExtra(STEP_INDEX, index);
-            startActivity(intent);
-        }
+            }
     }
+
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -188,16 +187,6 @@ public class RecipeDetailFragment extends Fragment {
 
         recipeStepsAdapter = new RecipeStepsAdapter(getActivity(), mBakingSteps, onStepClickListener);
 
-        /*layoutManager = new LinearLayoutManager(getContext());
-        mRecipeStepsRecyclerView.setLayoutManager(layoutManager);
-
-        recipeStepsAdapter.setHasStableIds(true);
-        mRecipeStepsRecyclerView.setHasFixedSize(true);
-        mRecipeStepsRecyclerView.setAdapter(recipeStepsAdapter);
-
-        mRecipeStepsRecyclerView.addItemDecoration(new DividerItemDecoration(getContext(),
-                DividerItemDecoration.VERTICAL));
-**/
         setUpRecyclerListener(mRecipeStepsRecyclerView);
         showIngredients(mIngredients);
 
@@ -250,7 +239,7 @@ public class RecipeDetailFragment extends Fragment {
                         String thisStepImageUrl = thisRecipeStep.getThumbnailStepUrl();
 
                         if (tabletSize) {
-                            showStepsPlayer(mCurrCheckedPosition);
+                            //showStepsPlayer(mCurrCheckedPosition);
                             Fragment exoPlayerFragment = new StepsPlayFragment();
                             Bundle bundle = new Bundle();
                             bundle.putParcelable(STEP_SELECTION, thisRecipeStep);

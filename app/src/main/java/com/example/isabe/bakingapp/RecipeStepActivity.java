@@ -82,22 +82,16 @@ public class RecipeStepActivity extends AppCompatActivity {
         String stepVideoUrl = mStepItem.getVideoUrl();
         String stepImageUrl = mStepItem.getThumbnailStepUrl();
 
-        attachSteps(getBaseContext(), mStepItem);
-
         thisRecipeSteps = RecipeDetailFragment.getListOfSteps();
 
-        /**if (savedInstanceState == null) {
-            StepsPlayFragment stepsPlayFragment = new StepsPlayFragment();
-            stepsPlayFragment.setArguments(getIntent().getExtras());
-            getSupportFragmentManager().beginTransaction().add(R.id.stepFragmentContainer, stepsPlayFragment)
-                    .commit();
+        if (savedInstanceState == null) {
+            attachSteps(getBaseContext(), mStepItem);
         }
-         **/
-        if (savedInstanceState != null) {
-            mStepItem = getIntent().getParcelableExtra(STEP_SELECTION);
 
+         if (savedInstanceState != null) {
+            mStepItem = getIntent().getParcelableExtra(STEP_SELECTION);
             stepParcelId = getIntent().getIntExtra(STEP_ID, DEFAULT_STEP_ID);
-            StepsPlayFragment.newInstance(stepParcelId);
+            //  StepsPlayFragment.newInstance(stepParcelId);
         }
 
 

@@ -57,6 +57,7 @@ import static com.example.isabe.bakingapp.RecipeDetailFragment.STEP_SELECTION;
 public class StepsPlayFragment extends Fragment implements Player.EventListener {
     private static final String LOG_TAG = StepsPlayFragment.class.getSimpleName();
     private static final java.lang.String VIDEO_POSITION = "position_video";
+    private static final String CURRENT_WINDOW = "window_index";
     private ExoPlayer mExoPlayer;
     private List<BakingStep> bakingStepList = new ArrayList<>();
     private static BakingStep stepItem;
@@ -93,9 +94,10 @@ public class StepsPlayFragment extends Fragment implements Player.EventListener 
     private Timeline.Window currentWindow = new Timeline.Window();
     private int currentWindowIndex = 0;
     private RecipeStepsAdapter mRecipeAdapter;
-    private long playbackPosition = 0;
+    private long playbackPosition = C.TIME_UNSET;
     @BindBool(R.bool.isTablet)
     boolean tabletSize;
+    boolean playWhenReady;
 
     Unbinder unbinder;
 
@@ -125,11 +127,10 @@ public class StepsPlayFragment extends Fragment implements Player.EventListener 
             stepImageUrl = stepItem.getThumbnailStepUrl();
         }
 
-        if(savedInstanceState != null){
+        if (savedInstanceState != null) {
             stepId = savedInstanceState.getInt(EXTRA_STEP_ID);
         }
     }
-
 
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
@@ -138,14 +139,17 @@ public class StepsPlayFragment extends Fragment implements Player.EventListener 
 
         bakingStepList = RecipeDetailFragment.getListOfSteps();
         if (savedInstanceState != null) {
-
-            if (stepVideoUrl != null && !stepVideoUrl.isEmpty() && mExoPlayer !=null) {
-                playbackPosition = savedInstanceState.getLong(VIDEO_POSITION, mExoPlayer.getCurrentPosition());
+            if (stepVideoUrl != null && !stepVideoUrl.isEmpty() && mExoPlayer != null) {
+                playbackPosition = savedInstanceState.getLong(VIDEO_POSITION, C.TIME_UNSET);
+                currentWindowIndex = savedInstanceState.getInt(CURRENT_WINDOW);
+                mExoPlayer.setPlayWhenReady(true);
+                mExoPlayer.seekTo(currentWindowIndex, playbackPosition);
             }
         }
 
         return view;
     }
+
 
     @RequiresApi(api = Build.VERSION_CODES.KITKAT)
     @Override
@@ -250,7 +254,10 @@ public class StepsPlayFragment extends Fragment implements Player.EventListener 
         super.onSaveInstanceState(outState);
 
         outState.putInt(EXTRA_STEP_ID, stepId);
-
+        if (mExoPlayer != null) {
+            outState.putLong(VIDEO_POSITION, mExoPlayer.getCurrentPosition());
+            outState.putInt(CURRENT_WINDOW, mExoPlayer.getCurrentWindowIndex());
+        }
     }
 
     public void getObject() {
@@ -262,7 +269,7 @@ public class StepsPlayFragment extends Fragment implements Player.EventListener 
     @OnClick(R.id.button_next)
     public void toNext() {
         try {
-           // getObject();
+            //getObject();
             stepId = stepItem.getId();
             stepId = stepId + 1;
 
@@ -290,7 +297,7 @@ public class StepsPlayFragment extends Fragment implements Player.EventListener 
     @OnClick(R.id.button_previous)
     public void toPrevious() {
         if (stepId > 0) {
-           // getObject();
+            // getObject();
             stepId = stepItem.getId();
             stepId = stepId - 1;
 
