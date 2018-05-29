@@ -56,6 +56,7 @@ public class RecipeStepActivity extends AppCompatActivity {
         return playFragment;
     }
 
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -82,13 +83,14 @@ public class RecipeStepActivity extends AppCompatActivity {
         String stepVideoUrl = mStepItem.getVideoUrl();
         String stepImageUrl = mStepItem.getThumbnailStepUrl();
 
+
         thisRecipeSteps = RecipeDetailFragment.getListOfSteps();
 
         if (savedInstanceState == null) {
             attachSteps(getBaseContext(), mStepItem);
         }
 
-         if (savedInstanceState != null) {
+        if (savedInstanceState != null) {
             mStepItem = getIntent().getParcelableExtra(STEP_SELECTION);
             stepParcelId = getIntent().getIntExtra(STEP_ID, DEFAULT_STEP_ID);
             //  StepsPlayFragment.newInstance(stepParcelId);
@@ -110,8 +112,9 @@ public class RecipeStepActivity extends AppCompatActivity {
                 return super.onOptionsItemSelected(item);
         }
     }
-
-
 }
+
+
+
 
 

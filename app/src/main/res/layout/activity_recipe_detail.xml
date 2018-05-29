@@ -53,13 +53,14 @@
 
             </FrameLayout>
 
-         <FrameLayout
+            <FrameLayout
                 android:id="@+id/frame_recycler"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
 
             </FrameLayout>
-         </LinearLayout>
+
+        </LinearLayout>
     </android.support.v4.widget.NestedScrollView>
 
 

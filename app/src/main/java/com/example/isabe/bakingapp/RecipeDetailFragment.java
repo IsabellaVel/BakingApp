@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -63,7 +64,7 @@ public class RecipeDetailFragment extends Fragment {
     @BindBool(R.bool.two_pane_mode)
     boolean mTwoPane;
     private int mCurrCheckedPosition = 0;
-    private BakingStep mStepItem;
+    private BakingStep thisRecipeStep;
     @BindString(R.string.recipe_ingredients)
     String stIngredsHeader;
     private IngredientsAdapter mIngredientsAdapter;
@@ -117,39 +118,38 @@ public class RecipeDetailFragment extends Fragment {
             mCurrCheckedPosition = savedInstanceState.getInt(STEP_INDEX, 0);
 
         }
-        if (mTwoPane == false) {
-            showStepsPlayer(mCurrCheckedPosition);
+        if (mTwoPane) {
+            //  showStepsPlayer(mCurrCheckedPosition);
+            setUpRecyclerListener(mRecipeStepsRecyclerView);
             Log.i(LOG_TAG, "Single pane mode reached.");
-        } else if (tabletSize) {
-            Log.i(LOG_TAG, "Dual mode reached from tabletSize.");
+        }else {
+
         }
     }
 
-
     private void showStepsPlayer(int index) {
         mCurrCheckedPosition = index;
-        if (mTwoPane == false) {
-            StepsPlayFragment stepsPlayerFragment = (StepsPlayFragment)
-                    getFragmentManager().findFragmentById(R.id.frame_recycler);
+
+        if (mTwoPane) {
+
+            FragmentManager fm = getFragmentManager();
+            android.support.v4.app.FragmentTransaction fragmentTransaction = fm.beginTransaction();
+
+            StepsPlayFragment stepsPlayerFragment = StepsPlayFragment.newInstance(index);
 
             if (stepsPlayerFragment == null || stepsPlayerFragment.getShownIndex() != index) {
-                stepsPlayerFragment = StepsPlayFragment.newInstance(index);
-
-                android.support.v4.app.FragmentTransaction fragmentTransaction = getFragmentManager()
-                        .beginTransaction();
 
                 if (index == 0) {
-                    fragmentTransaction.replace(R.id.frame_recycler, stepsPlayerFragment);
+                    fragmentTransaction.replace(R.id.frame_player, stepsPlayerFragment);
                 } else {
-                    fragmentTransaction.replace(R.id.frame_recycler, stepsPlayerFragment);
+                    fragmentTransaction.replace(R.id.frame_player, stepsPlayerFragment);
                 }
 
                 fragmentTransaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE);
                 fragmentTransaction.commit();
                 Log.i(LOG_TAG, "ShowStepsPlayer functioning.");
             }
-        } else {
-            }
+        }
     }
 
 
@@ -230,7 +230,7 @@ public class RecipeDetailFragment extends Fragment {
                         //TODO
                         mCurrCheckedPosition = position;
 
-                        BakingStep thisRecipeStep = recipeStepsAdapter.getItem(position);
+                        thisRecipeStep = recipeStepsAdapter.getItem(position);
                         assert thisRecipeStep != null;
                         int thisRecipeId = thisRecipeStep.getId();
                         String thisStepShortDesc = thisRecipeStep.getBriefStepDescription();
@@ -239,11 +239,12 @@ public class RecipeDetailFragment extends Fragment {
                         String thisStepImageUrl = thisRecipeStep.getThumbnailStepUrl();
 
                         if (tabletSize) {
-                            //showStepsPlayer(mCurrCheckedPosition);
                             Fragment exoPlayerFragment = new StepsPlayFragment();
                             Bundle bundle = new Bundle();
                             bundle.putParcelable(STEP_SELECTION, thisRecipeStep);
                             exoPlayerFragment.setArguments(bundle);
+                            showStepsPlayer(mCurrCheckedPosition);
+
                         } else {
                             thisRecipeStep = recipeStepsAdapter.getItem(position);
                             assert thisRecipeStep != null;
