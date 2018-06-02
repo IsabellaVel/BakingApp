@@ -70,6 +70,9 @@ public class StepsPlayFragment extends Fragment implements Player.EventListener 
     @BindView(R.id.step_image)
     ImageView mStepImage;
 
+    @BindView(R.id.cupcake_drawable)
+    ImageView mCupcakeImage;
+
     @BindView(R.id.step_instructions)
     TextView mDetailedInstructions;
 
@@ -97,10 +100,11 @@ public class StepsPlayFragment extends Fragment implements Player.EventListener 
     private Timeline.Window currentWindow = new Timeline.Window();
     private int currentWindowIndex = 0;
     private RecipeStepsAdapter mRecipeAdapter;
-    private long playbackPosition = C.TIME_UNSET;
+    private long playbackPosition = 0;
     @BindBool(R.bool.isTablet)
     boolean tabletSize;
     boolean playWhenReady;
+    private int mCurrentIndex = 0;
 
     Unbinder unbinder;
 
@@ -140,6 +144,30 @@ public class StepsPlayFragment extends Fragment implements Player.EventListener 
 
         bakingStepList = RecipeDetailFragment.getListOfSteps();
 
+        if (savedInstanceState != null) {
+            stepId = savedInstanceState.getInt(EXTRA_STEP_ID);
+            playbackPosition = savedInstanceState.getLong(VIDEO_POSITION);
+            currentWindowIndex = savedInstanceState.getInt(CURRENT_WINDOW);
+            Log.i(LOG_TAG, "Saved instance state " + stepId);
+            Log.i(LOG_TAG, "Saved instance state playback position " + playbackPosition);
+
+
+            stepItem = bakingStepList.get(stepId);
+            stepLongDesc = stepItem.getLongStepDescription();
+            stepVideoUrl = stepItem.getVideoUrl();
+
+            if (stepVideoUrl != null && !stepVideoUrl.isEmpty()) {
+                mStepVideo.setVisibility(View.VISIBLE);
+                initializeMediaSession();
+                initializePlayer(Uri.parse(stepVideoUrl));
+            } else {
+                mStepVideo.setVisibility(View.GONE);
+            }
+
+            stepImageUrl = stepItem.getThumbnailStepUrl();
+            mDetailedInstructions.setText(stepLongDesc);
+        }
+
         return view;
     }
 
@@ -156,6 +184,7 @@ public class StepsPlayFragment extends Fragment implements Player.EventListener 
         }
         if (stepVideoUrl != null && !stepVideoUrl.isEmpty()) {
             mStepVideo.setVisibility(View.VISIBLE);
+            mCupcakeImage.setVisibility(View.GONE);
             initializeMediaSession();
             initializePlayer(Uri.parse(stepVideoUrl));
 
@@ -169,6 +198,7 @@ public class StepsPlayFragment extends Fragment implements Player.EventListener 
             }
         } else {
             mStepVideo.setVisibility(View.GONE);
+            mCupcakeImage.setVisibility(View.VISIBLE);
         }
     }
 
@@ -176,31 +206,7 @@ public class StepsPlayFragment extends Fragment implements Player.EventListener 
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
-        if (savedInstanceState != null) {
-            stepId = savedInstanceState.getInt(EXTRA_STEP_ID);
-            playbackPosition = savedInstanceState.getLong(VIDEO_POSITION);
-            currentWindowIndex = savedInstanceState.getInt(CURRENT_WINDOW);
-            Log.i(LOG_TAG, "Saved instance state " + stepId);
-            Log.i(LOG_TAG, "Saved instance state " + playbackPosition);
 
-
-            stepItem = bakingStepList.get(stepId);
-            stepLongDesc = stepItem.getLongStepDescription();
-            stepVideoUrl = stepItem.getVideoUrl();
-
-            releasePlayer();
-
-            if (stepVideoUrl != null && !stepVideoUrl.isEmpty()) {
-                mStepVideo.setVisibility(View.VISIBLE);
-                initializeMediaSession();
-                initializePlayer(Uri.parse(stepVideoUrl));
-            } else {
-                mStepVideo.setVisibility(View.GONE);
-            }
-
-            stepImageUrl = stepItem.getThumbnailStepUrl();
-            mDetailedInstructions.setText(stepLongDesc);
-        }
     }
 
     @RequiresApi(api = Build.VERSION_CODES.KITKAT)
@@ -270,16 +276,6 @@ public class StepsPlayFragment extends Fragment implements Player.EventListener 
         MediaControllerCompat mediaControllerCompat = new MediaControllerCompat(getContext(), mMediaSession);
         MediaControllerCompat.setMediaController(getActivity(), mediaControllerCompat);
 
-    }
-
-    @Override
-    public void onSaveInstanceState(Bundle outState) {
-        super.onSaveInstanceState(outState);
-
-        outState.putInt(EXTRA_STEP_ID, savedStep);
-        outState.putLong(VIDEO_POSITION, playbackPosition);
-        outState.putInt(CURRENT_WINDOW, currentWindowIndex);
-        Log.i(LOG_TAG, "Saved playback position " + playbackPosition);
     }
 
     public void getObject() {
@@ -363,12 +359,13 @@ public class StepsPlayFragment extends Fragment implements Player.EventListener 
 
             mStepVideo.setPlayer(mExoPlayer);
             mExoPlayer.setPlayWhenReady(true);
-            mExoPlayer.seekTo(currentWindowIndex, playbackPosition);
 
             Uri uri = Uri.parse(stepVideoUrl);
 
             MediaSource mediaSource = buildMediaSource(uri);
             mExoPlayer.prepare(mediaSource, true, false);
+            if (playbackPosition != 0)
+                mExoPlayer.seekTo(currentWindowIndex, playbackPosition);
         }
 
     }
@@ -382,6 +379,7 @@ public class StepsPlayFragment extends Fragment implements Player.EventListener 
     public void releasePlayer() {
         if (mExoPlayer != null) {
             playbackPosition = mExoPlayer.getCurrentPosition();
+            Log.i(LOG_TAG, "Current playback position is " + playbackPosition);
             currentWindowIndex = mExoPlayer.getCurrentWindowIndex();
             playWhenReady = mExoPlayer.getPlayWhenReady();
             mExoPlayer.stop();
@@ -393,6 +391,20 @@ public class StepsPlayFragment extends Fragment implements Player.EventListener 
         }
     }
 
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+
+
+        //check here if this saves the current step id
+        outState.putInt(EXTRA_STEP_ID, savedStep);
+
+        if (mExoPlayer != null) {
+          //  outState.putInt(EXTRA_STEP_ID, savedStep);
+            outState.putLong(VIDEO_POSITION, mExoPlayer.getCurrentPosition());
+            outState.putInt(CURRENT_WINDOW, currentWindowIndex);
+            Log.i(LOG_TAG, "Saved playback position " + playbackPosition);
+        }
+    }
 
     @Override
     public void onPlayerStateChanged(boolean playWhenReady, int playbackState) {
@@ -413,8 +425,6 @@ public class StepsPlayFragment extends Fragment implements Player.EventListener 
         super.onStart();
         if (Util.SDK_INT > 23) {
             if (stepVideoUrl != null && !stepVideoUrl.isEmpty()) {
-                //initializeMediaSession();
-                //initializePlayer(Uri.parse(stepVideoUrl));
             }
         }
     }

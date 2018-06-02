@@ -35,6 +35,8 @@ public class RecipeStepActivity extends AppCompatActivity {
     public static List<BakingStep> thisRecipeSteps;
     int stepId;
     int recipeId;
+    @BindBool(R.bool.isTablet)
+    boolean tabletSize;
 
     public static Intent createIntent(Context context, int recipeId, int stepId) {
         Intent intent = new Intent(context, RecipeStepActivity.class);
@@ -53,6 +55,7 @@ public class RecipeStepActivity extends AppCompatActivity {
         getSupportFragmentManager().beginTransaction()
                 .add(R.id.stepFragmentContainer, playFragment)
                 .commit();
+
         return playFragment;
     }
 

@@ -33,6 +33,16 @@
             android:name=".RecipeStepActivity"
             android:label="@string/title_step_activity"
             android:parentActivityName=".RecipeDetailActivity" />
+
+        <receiver android:name=".widget.RecipeWidgetProvider">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+            </intent-filter>
+
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/recipe_widget_provider_info" />
+        </receiver>
     </application>
 
 </manifest>

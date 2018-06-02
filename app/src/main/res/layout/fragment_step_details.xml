@@ -11,21 +11,25 @@
     tools:layout_editor_absoluteY="81dp">
 
     <FrameLayout
+        android:id="@+id/frame_player"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/frame_player"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        >
+        app:layout_constraintTop_toTopOf="parent">
+
+        <ImageView
+            android:id="@+id/cupcake_drawable"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:src="@drawable/cupcake" />
 
         <com.google.android.exoplayer2.ui.PlayerView
             android:id="@+id/step_video"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_margin="8dp"
-            app:resize_mode="fixed_width"
-            />
+            app:resize_mode="fixed_width" />
     </FrameLayout>
 
     <android.support.v7.widget.CardView
