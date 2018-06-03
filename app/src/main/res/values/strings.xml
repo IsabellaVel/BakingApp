@@ -12,4 +12,8 @@
     <xliff:g id="unit">%s</xliff:g>)
     </string>
     <string name="ingred_header">Recipe Ingredients</string>
+    <string name="ingreds_file_key">file_prefs</string>
+    <string name="ingreds_recipe_key">recipe_prefs</string>
+    <string name="ingreds_key">ingreds_prefs</string>
+    <string name="def_string">No ingredients saved</string>
 </resources>

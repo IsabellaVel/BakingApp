@@ -1,7 +1,11 @@
 package com.example.isabe.bakingapp;
 
 import android.app.Activity;
+import android.appwidget.AppWidgetManager;
+import android.content.ComponentName;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.CollapsingToolbarLayout;
@@ -21,6 +25,7 @@ import com.example.isabe.bakingapp.adapters.RecyclerTouchListener;
 import com.example.isabe.bakingapp.objects.BakingStep;
 import com.example.isabe.bakingapp.objects.Ingredient;
 import com.example.isabe.bakingapp.objects.RecipeContent;
+import com.example.isabe.bakingapp.widget.RecipeWidgetProvider;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -68,6 +73,9 @@ public class RecipeDetailFragment extends Fragment {
     private IngredientsAdapter mIngredientsAdapter;
     @BindBool(R.bool.isTablet)
     boolean tabletSize;
+
+    String stringIngreds;
+    RecipeContent recipeContent;
 
 
     int ingredId;
@@ -152,7 +160,7 @@ public class RecipeDetailFragment extends Fragment {
 
         Bundle args = getArguments();
         if (args != null) {
-            RecipeContent recipeContent = args.getParcelable(RECIPE_SELECTION);
+            recipeContent = args.getParcelable(RECIPE_SELECTION);
             assert recipeContent != null;
             mBakingSteps = recipeContent.getBakingSteps();
             mIngredients = recipeContent.getIngredients();
@@ -181,6 +189,10 @@ public class RecipeDetailFragment extends Fragment {
         recipeStepsAdapter = new RecipeStepsAdapter(getActivity(), mBakingSteps, onStepClickListener);
 
         setUpRecyclerListener(mRecipeStepsRecyclerView);
+
+        stringIngreds = prepareIngredsString(mIngredients);
+        saveIngreds(recipeContent.getRecipeName(), stringIngreds);
+
         showIngredients(mIngredients);
 
         if (mBakingSteps != null && mBakingSteps.isEmpty()) {
@@ -210,6 +222,44 @@ public class RecipeDetailFragment extends Fragment {
             stringBuilder.append(formatIngredient(getContext(), nameIngredient, qty, uMeasure));
         }
         tvRecipeIngreds.setText(stringBuilder.toString());
+
+    }
+
+    public String prepareIngredsString(List<Ingredient> ingredientsList) {
+        StringBuilder stringBuilder = new StringBuilder();
+        for (int iIngred = 0; iIngred < mIngredients.size(); iIngred++) {
+
+            mIngredItem = ingredientsList.get(iIngred);
+
+            String nameIngredient = mIngredItem.getIngredientName();
+            float qty = mIngredItem.getQuantityIngredient();
+            String uMeasure = mIngredItem.getUnit();
+            stringBuilder.append("\n");
+            stringBuilder.append(formatIngredient(getContext(), nameIngredient, qty, uMeasure));
+        }
+        return stringBuilder.toString().toLowerCase().trim();
+    }
+
+    public void saveIngreds(String recipeName, String stringIngreds) {
+        Activity activity = getActivity();
+        SharedPreferences sharedPreferences = activity.getSharedPreferences(
+                activity.getString(R.string.ingreds_file_key), Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.putString(getString(R.string.ingreds_recipe_key), recipeName);
+        showIngredients(mIngredients);
+
+        editor.putString(getString(R.string.ingreds_key), stringIngreds);
+        editor.commit();
+
+        Intent intent = new Intent(activity, RecipeWidgetProvider.class);
+        intent.setAction("android.appwidget.action.APPWIDGET_UPDATE");
+        int appWidgetIds[] = AppWidgetManager.getInstance(activity.getApplication())
+                .getAppWidgetIds(new ComponentName(activity.getApplication(),
+                RecipeWidgetProvider.class));
+        intent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS, appWidgetIds);
+        activity.sendBroadcast(intent);
+
+        Log.i(LOG_TAG, "Recipe saved in SharedPreferences.");
 
     }
 

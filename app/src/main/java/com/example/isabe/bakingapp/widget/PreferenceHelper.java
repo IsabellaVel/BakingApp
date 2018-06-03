@@ -38,7 +38,7 @@ public class PreferenceHelper {
     }
 
     public String getSelectedRecipe(int id){
-        return sharedPreferences.getString("selected_recipe" + id, "");
+        return sharedPreferences.getString("selected_recipe" + id, "Nutella Pie");
     }
 
     public void storeSelectedRecipe(int id, String text){
