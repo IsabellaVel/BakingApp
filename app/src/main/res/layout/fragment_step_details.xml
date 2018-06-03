@@ -20,8 +20,9 @@
 
         <ImageView
             android:id="@+id/cupcake_drawable"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_width="150dp"
+            android:layout_height="150dp"
+            android:layout_gravity="center_horizontal"
             android:src="@drawable/cupcake" />
 
         <com.google.android.exoplayer2.ui.PlayerView

@@ -74,7 +74,7 @@ public class RecipeDetailFragment extends Fragment {
     @BindBool(R.bool.isTablet)
     boolean tabletSize;
 
-    String stringIngreds;
+    public String stringIngreds;
     RecipeContent recipeContent;
 
 

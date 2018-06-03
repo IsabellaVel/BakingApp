@@ -3,6 +3,7 @@ package com.example.isabe.bakingapp.widget;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.util.Log;
 import android.widget.RemoteViews;
 import android.widget.RemoteViewsService;
 
@@ -16,6 +17,7 @@ import java.util.List;
  */
 
 public class WidgetService extends RemoteViewsService {
+    private static final String LOG_TAG = WidgetService.class.getSimpleName();
     @Override
     public RemoteViewsFactory onGetViewFactory(Intent intent) {
         return new WidgetDataProvider(this.getApplicationContext(), intent);
@@ -66,6 +68,7 @@ public class WidgetService extends RemoteViewsService {
             String ingredString = sharedPreferences.getString
                     (mContext.getString(R.string.ingreds_key), getString(R.string.def_string));
             remoteViews.setTextViewText(R.id.widget_ingred_item, ingredString);
+            Log.i(LOG_TAG, "IngredientsList added to widget.");
 
             return remoteViews;
         }

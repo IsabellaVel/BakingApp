@@ -13,7 +13,7 @@ import android.util.Log;
 import android.widget.RemoteViews;
 
 import com.example.isabe.bakingapp.R;
-import com.example.isabe.bakingapp.RecipeListFragment;
+import com.example.isabe.bakingapp.RecipeListActivity;
 
 /**
  * Created by isabe on 6/2/2018.
@@ -32,9 +32,8 @@ public class RecipeWidgetProvider extends AppWidgetProvider {
                 defaultString);
 
         RemoteViews remoteViews = new RemoteViews(context.getPackageName(), R.layout.recipe_widget);
-        if (recipeName != defaultString) {
+        if (!recipeName.equals(defaultString)) {
             setRemoteAdapter(context, remoteViews);
-
             /**   Intent intentService = new Intent(context, WidgetService.class);
              intentService.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetIds[i]);
              intentService.setData(Uri.parse(intentService.toUri(Intent.URI_INTENT_SCHEME)));
@@ -47,9 +46,9 @@ public class RecipeWidgetProvider extends AppWidgetProvider {
 
         remoteViews.setTextViewText(R.id.widget_recipe_text, recipeName);
 
-        Intent intentWidget = new Intent(context, RecipeListFragment.class);
+        Intent intentWidget = new Intent(context, RecipeListActivity.class);
         PendingIntent pendingIntent = PendingIntent.getActivity(context, 0,
-                intentWidget, PendingIntent.FLAG_CANCEL_CURRENT);
+                intentWidget, 0);
         remoteViews.setOnClickPendingIntent(R.id.widget_recipe_text, pendingIntent);
 
         appWidgetManager.updateAppWidget(appWidgetId, remoteViews);
