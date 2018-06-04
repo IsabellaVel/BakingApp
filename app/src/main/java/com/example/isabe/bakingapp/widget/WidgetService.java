@@ -1,5 +1,6 @@
 package com.example.isabe.bakingapp.widget;
 
+import android.appwidget.AppWidgetManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -24,16 +25,19 @@ public class WidgetService extends RemoteViewsService {
     }
 
     public class WidgetDataProvider implements RemoteViewsService.RemoteViewsFactory {
-        Context mContext;
+        private Context mContext;
+        private int mAppWidgetId;
         List<String> ingredientList = new ArrayList<>();
 
         public WidgetDataProvider(Context context, Intent intent) {
             mContext = context;
+            mAppWidgetId = intent.getIntExtra(AppWidgetManager.EXTRA_APPWIDGET_ID,
+                    AppWidgetManager.INVALID_APPWIDGET_ID);
         }
 
         @Override
         public void onCreate() {
-            initData();
+           // initData();
         }
 
         private void initData() {
@@ -45,7 +49,7 @@ public class WidgetService extends RemoteViewsService {
 
         @Override
         public void onDataSetChanged() {
-            initData();
+            //initData();
         }
 
         @Override
@@ -55,7 +59,7 @@ public class WidgetService extends RemoteViewsService {
 
         @Override
         public int getCount() {
-            return ingredientList.size();
+            return 1;
         }
 
         @Override

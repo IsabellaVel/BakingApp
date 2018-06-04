@@ -18,6 +18,7 @@ import com.example.isabe.bakingapp.objects.RecipeContent;
 import java.util.List;
 
 import butterknife.BindBool;
+import butterknife.BindView;
 
 import static com.example.isabe.bakingapp.RecipeDetailFragment.STEP_SELECTION;
 
@@ -67,17 +68,11 @@ public class RecipeStepActivity extends AppCompatActivity {
         setContentView(R.layout.activity_step);
 
         // Show the Up button in the action bar.
-        ActionBar actionBar = getSupportActionBar();
+        android.app.ActionBar actionBar = getActionBar();
         if (actionBar != null) {
             actionBar.setDisplayHomeAsUpEnabled(true);
         }
 
-        /**    if (getResources().getConfiguration().orientation
-         == Configuration.ORIENTATION_LANDSCAPE) {
-         finish();
-         return;
-         }
-         **/
         mStepItem = getIntent().getParcelableExtra(STEP_SELECTION);
 
         int stepParcelId = mStepItem.getId();
@@ -108,7 +103,7 @@ public class RecipeStepActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.homeAsUp:
-                mStepItem = getIntent().getParcelableExtra(STEP_SELECTION);
+                // mStepItem = getIntent().getParcelableExtra(STEP_SELECTION);
                 NavUtils.navigateUpFromSameTask(this);
                 return true;
             default:

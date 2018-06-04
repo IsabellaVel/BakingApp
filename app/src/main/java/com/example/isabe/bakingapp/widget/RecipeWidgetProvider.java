@@ -7,6 +7,7 @@ import android.appwidget.AppWidgetProvider;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.net.Uri;
 import android.os.Build;
 import android.support.annotation.NonNull;
 import android.util.Log;
@@ -23,7 +24,8 @@ public class RecipeWidgetProvider extends AppWidgetProvider {
     private static final String LOG_TAG = RecipeWidgetProvider.class.getSimpleName();
 
     static void updateAppWidget(Context context, AppWidgetManager appWidgetManager,
-                                int appWidgetId){
+                                int appWidgetId) {
+
         String defaultString = "Nutella Pie";
 
         SharedPreferences sharedPreferences = context.getSharedPreferences(
@@ -33,15 +35,10 @@ public class RecipeWidgetProvider extends AppWidgetProvider {
 
         RemoteViews remoteViews = new RemoteViews(context.getPackageName(), R.layout.recipe_widget);
         if (!recipeName.equals(defaultString)) {
-            setRemoteAdapter(context, remoteViews);
-            /**   Intent intentService = new Intent(context, WidgetService.class);
-             intentService.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetIds[i]);
-             intentService.setData(Uri.parse(intentService.toUri(Intent.URI_INTENT_SCHEME)));
-
-             remoteViews.setRemoteAdapter(R.id.widget_ingreds_list, intentService);
-             appWidgetManager.notifyAppWidgetViewDataChanged(appWidgetId,
-             R.id.widget_ingreds_list);
-             **/
+            //setRemoteAdapter(context, remoteViews);
+            appWidgetManager.notifyAppWidgetViewDataChanged(appWidgetId,
+                    R.id.widget_ingreds_list);
+            Log.i(LOG_TAG, "Remote adapter is set up.");
         }
 
         remoteViews.setTextViewText(R.id.widget_recipe_text, recipeName);
@@ -61,9 +58,35 @@ public class RecipeWidgetProvider extends AppWidgetProvider {
                          int[] appWidgetIds) {
         for (int i = 0; i < appWidgetIds.length; i++) {
             int appWidgetId = appWidgetIds[i];
-            updateAppWidget(context, appWidgetManager, appWidgetId);
+
+            String defaultString = "Nutella Pie";
+
+            SharedPreferences sharedPreferences = context.getSharedPreferences(
+                    context.getString(R.string.ingreds_file_key), Context.MODE_PRIVATE);
+            String recipeName = sharedPreferences.getString(context.getString(R.string.ingreds_recipe_key),
+                    defaultString);
+
+            RemoteViews remoteViews = new RemoteViews(context.getPackageName(), R.layout.recipe_widget);
+                Intent widgetServiceIntent = new Intent(context, WidgetService.class);
+                widgetServiceIntent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId);
+                widgetServiceIntent.setData(Uri.parse(widgetServiceIntent.toUri(Intent.URI_INTENT_SCHEME)));
+
+                remoteViews.setRemoteAdapter(R.id.widget_ingreds_list, widgetServiceIntent);
+                appWidgetManager.notifyAppWidgetViewDataChanged(appWidgetId,
+                        R.id.widget_ingreds_list);
+
+            remoteViews.setTextViewText(R.id.widget_recipe_text, recipeName);
+
+            Intent openWidget = new Intent(context, RecipeListActivity.class);
+            PendingIntent pendingIntent = PendingIntent.getActivity(context, 0,
+                    openWidget, 0);
+
+            remoteViews.setOnClickPendingIntent(R.id.widget_recipe_text, pendingIntent);
+
+            appWidgetManager.updateAppWidget(appWidgetId, remoteViews);
+
+         super.onUpdate(context, appWidgetManager, appWidgetIds);
         }
-        super.onUpdate(context, appWidgetManager, appWidgetIds);
     }
 
     @TargetApi(Build.VERSION_CODES.ICE_CREAM_SANDWICH)
