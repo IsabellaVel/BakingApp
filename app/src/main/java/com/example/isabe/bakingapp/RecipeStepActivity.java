@@ -68,9 +68,10 @@ public class RecipeStepActivity extends AppCompatActivity {
         setContentView(R.layout.activity_step);
 
         // Show the Up button in the action bar.
-        android.app.ActionBar actionBar = getActionBar();
+        ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) {
             actionBar.setDisplayHomeAsUpEnabled(true);
+
         }
 
         mStepItem = getIntent().getParcelableExtra(STEP_SELECTION);
@@ -81,6 +82,9 @@ public class RecipeStepActivity extends AppCompatActivity {
         String stepVideoUrl = mStepItem.getVideoUrl();
         String stepImageUrl = mStepItem.getThumbnailStepUrl();
 
+        if (actionBar != null) {
+            actionBar.setTitle(stepShortName);
+        }
 
         thisRecipeSteps = RecipeDetailFragment.getListOfSteps();
 
@@ -102,7 +106,7 @@ public class RecipeStepActivity extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
-            case R.id.homeAsUp:
+            case R.id.home:
                 // mStepItem = getIntent().getParcelableExtra(STEP_SELECTION);
                 NavUtils.navigateUpFromSameTask(this);
                 return true;

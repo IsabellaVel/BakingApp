@@ -1,5 +1,7 @@
 package com.example.isabe.bakingapp;
 
+import android.app.ActionBar;
+import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
@@ -134,7 +136,6 @@ public class StepsPlayFragment extends Fragment implements Player.EventListener 
             stepVideoUrl = stepItem.getVideoUrl();
             stepImageUrl = stepItem.getThumbnailStepUrl();
         }
-
     }
 
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container,
@@ -399,7 +400,7 @@ public class StepsPlayFragment extends Fragment implements Player.EventListener 
         outState.putInt(EXTRA_STEP_ID, savedStep);
 
         if (mExoPlayer != null) {
-          //  outState.putInt(EXTRA_STEP_ID, savedStep);
+            //  outState.putInt(EXTRA_STEP_ID, savedStep);
             outState.putLong(VIDEO_POSITION, mExoPlayer.getCurrentPosition());
             outState.putInt(CURRENT_WINDOW, currentWindowIndex);
             Log.i(LOG_TAG, "Saved playback position " + playbackPosition);

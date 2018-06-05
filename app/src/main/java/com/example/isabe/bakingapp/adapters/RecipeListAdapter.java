@@ -141,11 +141,11 @@ public class RecipeListAdapter extends RecyclerView.Adapter<RecipeListAdapter.Vi
 
         final String imagePath = recipe.getRecipeImage();
         if (imagePath.isEmpty()) {
-            holder.mRecipeImage.setImageResource(R.drawable.recipe_icon);
+            holder.mRecipeImage.setImageResource(R.drawable.recipe_icon_density);
         } else {
             Picasso.with(mContext)
                     .load(imagePath)
-                    .placeholder(R.drawable.recipe_icon)
+                    .placeholder(R.drawable.recipe_icon_density)
                     .into(holder.mRecipeImage);
         }
         holder.mTvRecipeName.setText(recipe.getRecipeName());
@@ -175,6 +175,7 @@ public class RecipeListAdapter extends RecyclerView.Adapter<RecipeListAdapter.Vi
     }
 
     public void addAll(List<RecipeContent> list) {
+        if(list == null)
         recipesList.addAll(list);
     }
 

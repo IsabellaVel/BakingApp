@@ -53,7 +53,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:scaleType="centerCrop"
-                tools:src="@drawable/recipe_icon" />
+                tools:src="@drawable/recipe_icon_density" />
 
             <TextView
                 android:id="@+id/step_instructions"

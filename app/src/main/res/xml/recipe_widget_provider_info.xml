@@ -3,7 +3,7 @@
     android:initialLayout="@layout/recipe_widget"
     android:minHeight="40dp"
     android:minWidth="40dp"
-    android:previewImage="@drawable/icons_cake"
+    android:previewImage="@drawable/icons_cake_density"
     android:resizeMode="horizontal|vertical"
     android:updatePeriodMillis="1800000"
     android:widgetCategory="home_screen">

@@ -59,7 +59,6 @@ public class RecipeListActivity extends AppCompatActivity {
             mTwoPane = true;
         }
 
-
         RecipeListFragment recipeListFragment = (RecipeListFragment) getSupportFragmentManager().
                 findFragmentById(R.id.frameLayout);
 
@@ -71,6 +70,14 @@ public class RecipeListActivity extends AppCompatActivity {
                     .add(R.id.frameLayout, recipeListFragment)
                     .commit();
         }
+
+       }
+
+    @Override
+    protected void onStop(){
+        super.onStop();
+        setShowWhenLocked(true);
+        setTurnScreenOn(true);
     }
 
 
