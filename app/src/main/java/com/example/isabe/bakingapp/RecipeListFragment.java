@@ -32,12 +32,12 @@ import butterknife.Unbinder;
 
 public class RecipeListFragment extends Fragment implements LoaderManager.LoaderCallbacks<List<RecipeContent>> {
 
-    public static final String RECIPE_JSON_URI =
+    private static final String RECIPE_JSON_URI =
             "https://d17h27t6h515a5.cloudfront.net/topher/2017/May/59121517_baking/baking.json";
     public static final String RECIPE_SELECTION = "thisRecipe";
     private static final int LOADER_ID = 11;
     private static final String LOG_TAG = RecipeListFragment.class.getSimpleName();
-    private static final int REQUEST_CODE = 1;
+    // --Commented out by Inspection (6/5/2018 11:17 PM):private static final int REQUEST_CODE = 1;
     private RecipeListAdapter mRecipeAdapter;
 
     @BindView(R.id.recipes_list_rv)
@@ -48,7 +48,7 @@ public class RecipeListFragment extends Fragment implements LoaderManager.Loader
     @BindInt(R.integer.grid_column_number)
     int gridColNo;
 
-    Unbinder unbinder;
+    private Unbinder unbinder;
 
     public RecipeListFragment() {
     }
@@ -110,7 +110,7 @@ public class RecipeListFragment extends Fragment implements LoaderManager.Loader
         //  mRecipeAdapter.clear();
         if (dataRecipe != null && !dataRecipe.isEmpty()) {
             mRecipeAdapter.addAll(dataRecipe);
-            Log.e(LOG_TAG, "Successful LoadFinished for List of Recipes.");
+            Log.e(LOG_TAG, getString(R.string.load_finished_recipes));
         }
     }
 

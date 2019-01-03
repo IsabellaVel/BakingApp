@@ -8,9 +8,9 @@ import android.os.Parcelable;
  */
 
 public class Ingredient implements Parcelable{
-    public float quantityIngredient;
-    public String unit;
-    public String ingredientName;
+    private final float quantityIngredient;
+    private final String unit;
+    private final String ingredientName;
 
     public Ingredient(float qty, String uoM, String text){
         this.quantityIngredient = qty;
@@ -18,7 +18,7 @@ public class Ingredient implements Parcelable{
         this.ingredientName = text;
     }
 
-    protected Ingredient(Parcel in) {
+    private Ingredient(Parcel in) {
         quantityIngredient = in.readFloat();
         unit = in.readString();
         ingredientName = in.readString();
@@ -35,6 +35,7 @@ public class Ingredient implements Parcelable{
             return new Ingredient[size];
         }
     };
+
 
     public String getUnit() {
         return unit;

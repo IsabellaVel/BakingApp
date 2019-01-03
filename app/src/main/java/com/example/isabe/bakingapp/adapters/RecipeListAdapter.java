@@ -29,16 +29,16 @@ import butterknife.ButterKnife;
 public class RecipeListAdapter extends RecyclerView.Adapter<RecipeListAdapter.ViewHolder>
         implements RecyclerView.OnItemTouchListener {
 
-    public List<RecipeContent> recipesList = new ArrayList<>();
-    private RecyclerTouchListener.ItemClickListener mRecyclerTouchListener;
+    private List<RecipeContent> recipesList = new ArrayList<>();
+    private final RecyclerTouchListener.ItemClickListener mRecyclerTouchListener;
     @BindView(R.id.recipeNameListEntry)
     public TextView mTvRecipeName;
-
     @BindView(R.id.recipeImageView)
     public ImageView mRecipeImage;
 
-    public Context mContext;
-    private GestureDetector gestureDetector;
+
+    private final Context mContext;
+    private final GestureDetector gestureDetector;
 
 
     @Override
@@ -105,7 +105,7 @@ public class RecipeListAdapter extends RecyclerView.Adapter<RecipeListAdapter.Vi
         @BindView(R.id.recipeImageView)
         public ImageView mRecipeImage;
 
-        public int currentId;
+        // --Commented out by Inspection (6/5/2018 11:17 PM):public int currentId;
 
         public ViewHolder(View itemView) {
             super(itemView);
@@ -149,20 +149,16 @@ public class RecipeListAdapter extends RecyclerView.Adapter<RecipeListAdapter.Vi
                     .into(holder.mRecipeImage);
         }
         holder.mTvRecipeName.setText(recipe.getRecipeName());
-        /** holder.mView.setOnClickListener(new View.OnClickListener() {
-        @Override public void onClick(View view) {
-        Intent intentDetailActivity = new Intent(view.getContext(), RecipeDetailActivity.class);
-        intentDetailActivity.putExtra("id", currentId);
-        mContext.startActivity(intentDetailActivity);
-        }
-        });
-         **/
 
     }
 
     @Override
     public int getItemCount() {
-        return recipesList.size();
+        if (recipesList == null) {
+            return 0;
+        } else {
+            return recipesList.size();
+        }
     }
 
     public void clear() {
@@ -175,8 +171,8 @@ public class RecipeListAdapter extends RecyclerView.Adapter<RecipeListAdapter.Vi
     }
 
     public void addAll(List<RecipeContent> list) {
-        if(list == null)
-        recipesList.addAll(list);
+        if (list == null)
+            recipesList.addAll(list);
     }
 
 }

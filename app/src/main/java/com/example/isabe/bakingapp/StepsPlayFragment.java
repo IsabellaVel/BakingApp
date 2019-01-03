@@ -1,9 +1,5 @@
 package com.example.isabe.bakingapp;
 
-import android.app.ActionBar;
-import android.app.Activity;
-import android.content.Context;
-import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.net.Uri;
 import android.os.Build;
@@ -22,9 +18,7 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.example.isabe.bakingapp.adapters.RecipeStepsAdapter;
 import com.example.isabe.bakingapp.objects.BakingStep;
-import com.google.android.exoplayer2.C;
 import com.google.android.exoplayer2.DefaultLoadControl;
 import com.google.android.exoplayer2.DefaultRenderersFactory;
 import com.google.android.exoplayer2.ExoPlaybackException;
@@ -62,6 +56,7 @@ public class StepsPlayFragment extends Fragment implements Player.EventListener 
     private static final String LOG_TAG = StepsPlayFragment.class.getSimpleName();
     private static final java.lang.String VIDEO_POSITION = "position_video";
     private static final String CURRENT_WINDOW = "window_index";
+    private static final String PLAYBACK_STATE = "playback_state";
     private ExoPlayer mExoPlayer;
     private List<BakingStep> bakingStepList = new ArrayList<>();
     private BakingStep stepItem;
@@ -79,15 +74,12 @@ public class StepsPlayFragment extends Fragment implements Player.EventListener 
     TextView mDetailedInstructions;
 
     @BindView(R.id.button_next)
-    public Button mNextButton;
+    Button mNextButton;
 
     @BindView(R.id.button_previous)
-    public Button mPreviousButton;
+    Button mPreviousButton;
 
     private static final String EXTRA_STEP_ID = "EXTRA_ID";
-    private static final String EXTRA_VIDEO_ID = "VIDEO_ID";
-    private static final String EXTRA_IMAGE_ID = "IMAGE_ID";
-
     private String stepDescription;
     private String stepVideoUrl;
     private String stepImageUrl;
@@ -96,19 +88,19 @@ public class StepsPlayFragment extends Fragment implements Player.EventListener 
     private int savedStep;
 
     private static final long MAX_POSITION_FOR_SEEK_TO_PREVIOUS = 3000;
-    private boolean mTwoPane;
+    // --Commented out by Inspection (6/5/2018 11:17 PM):private boolean mTwoPane;
     private MediaSessionCompat mMediaSession;
     private PlaybackStateCompat.Builder mStateBuilder;
-    private Timeline.Window currentWindow = new Timeline.Window();
+    private final Timeline.Window currentWindow = new Timeline.Window();
     private int currentWindowIndex = 0;
-    private RecipeStepsAdapter mRecipeAdapter;
+    // --Commented out by Inspection (6/5/2018 11:17 PM):private RecipeStepsAdapter mRecipeAdapter;
     private long playbackPosition = 0;
     @BindBool(R.bool.isTablet)
     boolean tabletSize;
-    boolean playWhenReady;
+    private boolean playWhenReady;
     private int mCurrentIndex = 0;
 
-    Unbinder unbinder;
+    private Unbinder unbinder;
 
     public StepsPlayFragment() {
 
@@ -148,9 +140,10 @@ public class StepsPlayFragment extends Fragment implements Player.EventListener 
         if (savedInstanceState != null) {
             stepId = savedInstanceState.getInt(EXTRA_STEP_ID);
             playbackPosition = savedInstanceState.getLong(VIDEO_POSITION);
+            playWhenReady = savedInstanceState.getBoolean(PLAYBACK_STATE);
             currentWindowIndex = savedInstanceState.getInt(CURRENT_WINDOW);
-            Log.i(LOG_TAG, "Saved instance state " + stepId);
-            Log.i(LOG_TAG, "Saved instance state playback position " + playbackPosition);
+            Log.i(LOG_TAG, getString(R.string.saved_step_id) + stepId);
+            Log.i(LOG_TAG, getString(R.string.saved_playback_pos) + playbackPosition);
 
 
             stepItem = bakingStepList.get(stepId);
@@ -203,13 +196,6 @@ public class StepsPlayFragment extends Fragment implements Player.EventListener 
         }
     }
 
-    @Override
-    public void onActivityCreated(Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
-
-
-    }
-
     @RequiresApi(api = Build.VERSION_CODES.KITKAT)
     private void hideSystemUI() {
         mStepVideo.setSystemUiVisibility(
@@ -243,34 +229,38 @@ public class StepsPlayFragment extends Fragment implements Player.EventListener 
                 mExoPlayer.setPlayWhenReady(true);
             }
 
-            public void skipPrevious() {
-                Timeline currentTimeline = mExoPlayer.getCurrentTimeline();
-                if (currentTimeline.isEmpty()) {
-                    return;
-                }
-                int currentWindowIndex = mExoPlayer.getCurrentWindowIndex();
-                currentTimeline.getWindow(currentWindowIndex, currentWindow);
-                if (currentWindowIndex > 0 && (mExoPlayer.getContentPosition() <= MAX_POSITION_FOR_SEEK_TO_PREVIOUS
-                        || (currentWindow.isDynamic && !currentWindow.isSeekable))) {
-                    mExoPlayer.seekTo(currentWindowIndex - 1, C.TIME_UNSET);
-                } else {
-                    mExoPlayer.seekTo(0, C.TRACK_TYPE_DEFAULT);
-                }
-            }
+// --Commented out by Inspection START (6/5/2018 11:17 PM):
+//            public void skipPrevious() {
+//                Timeline currentTimeline = mExoPlayer.getCurrentTimeline();
+//                if (currentTimeline.isEmpty()) {
+//                    return;
+//                }
+//                int currentWindowIndex = mExoPlayer.getCurrentWindowIndex();
+//                currentTimeline.getWindow(currentWindowIndex, currentWindow);
+//                if (currentWindowIndex > 0 && (mExoPlayer.getContentPosition() <= MAX_POSITION_FOR_SEEK_TO_PREVIOUS
+//                        || (currentWindow.isDynamic && !currentWindow.isSeekable))) {
+//                    mExoPlayer.seekTo(currentWindowIndex - 1, C.TIME_UNSET);
+//                } else {
+//                    mExoPlayer.seekTo(0, C.TRACK_TYPE_DEFAULT);
+//                }
+//            }
+// --Commented out by Inspection STOP (6/5/2018 11:17 PM)
 
-            public void skipNext() {
-                Timeline currentTimeline = mExoPlayer.getCurrentTimeline();
-                if (currentTimeline.isEmpty()) {
-                    return;
-                }
-                int currentWindowIndex = mExoPlayer.getCurrentWindowIndex();
-                if (currentWindowIndex < currentTimeline.getWindowCount() - 1) {
-                    mExoPlayer.seekTo(currentWindowIndex + 1, C.TIME_UNSET);
-                } else if (currentTimeline.getWindow(currentWindowIndex, currentWindow,
-                        false).isDynamic) {
-                    mExoPlayer.seekTo(currentWindowIndex, C.TIME_UNSET);
-                }
-            }
+// --Commented out by Inspection START (6/5/2018 11:17 PM):
+//            public void skipNext() {
+//                Timeline currentTimeline = mExoPlayer.getCurrentTimeline();
+//                if (currentTimeline.isEmpty()) {
+//                    return;
+//                }
+//                int currentWindowIndex = mExoPlayer.getCurrentWindowIndex();
+//                if (currentWindowIndex < currentTimeline.getWindowCount() - 1) {
+//                    mExoPlayer.seekTo(currentWindowIndex + 1, C.TIME_UNSET);
+//                } else if (currentTimeline.getWindow(currentWindowIndex, currentWindow,
+//                        false).isDynamic) {
+//                    mExoPlayer.seekTo(currentWindowIndex, C.TIME_UNSET);
+//                }
+//            }
+// --Commented out by Inspection STOP (6/5/2018 11:17 PM)
         });
         mMediaSession.setActive(true);
 
@@ -279,11 +269,13 @@ public class StepsPlayFragment extends Fragment implements Player.EventListener 
 
     }
 
-    public void getObject() {
-        if (getArguments() != null) {
-            stepItem = getArguments().getParcelable(STEP_SELECTION);
-        }
-    }
+// --Commented out by Inspection START (6/5/2018 11:17 PM):
+//    public void getObject() {
+//        if (getArguments() != null) {
+//            stepItem = getArguments().getParcelable(STEP_SELECTION);
+//        }
+//    }
+// --Commented out by Inspection STOP (6/5/2018 11:17 PM)
 
 
     @OnClick(R.id.button_next)
@@ -373,14 +365,14 @@ public class StepsPlayFragment extends Fragment implements Player.EventListener 
 
     private MediaSource buildMediaSource(Uri uri) {
         return new ExtractorMediaSource.Factory(
-                new DefaultHttpDataSourceFactory("Video Step"))
+                new DefaultHttpDataSourceFactory(getString(R.string.video_step)))
                 .createMediaSource(uri);
     }
 
-    public void releasePlayer() {
+    private void releasePlayer() {
         if (mExoPlayer != null) {
             playbackPosition = mExoPlayer.getCurrentPosition();
-            Log.i(LOG_TAG, "Current playback position is " + playbackPosition);
+            Log.i(LOG_TAG, getString(R.string.release_playback_pos) + playbackPosition);
             currentWindowIndex = mExoPlayer.getCurrentWindowIndex();
             playWhenReady = mExoPlayer.getPlayWhenReady();
             mExoPlayer.stop();
@@ -402,8 +394,9 @@ public class StepsPlayFragment extends Fragment implements Player.EventListener 
         if (mExoPlayer != null) {
             //  outState.putInt(EXTRA_STEP_ID, savedStep);
             outState.putLong(VIDEO_POSITION, mExoPlayer.getCurrentPosition());
+            outState.putBoolean(PLAYBACK_STATE, mExoPlayer.getPlayWhenReady());
             outState.putInt(CURRENT_WINDOW, currentWindowIndex);
-            Log.i(LOG_TAG, "Saved playback position " + playbackPosition);
+            Log.i(LOG_TAG, getString(R.string.onSave_playback_pos) + playbackPosition);
         }
     }
 
@@ -412,11 +405,11 @@ public class StepsPlayFragment extends Fragment implements Player.EventListener 
         if ((playbackState == Player.STATE_READY) && playWhenReady) {
             mStateBuilder.setState(PlaybackStateCompat.STATE_PLAYING,
                     mExoPlayer.getCurrentPosition(), 1f);
-            Log.i(LOG_TAG, "ExoPlayer is playing.");
+            Log.i(LOG_TAG, getString(R.string.exo_playing));
         } else if (playbackState == Player.STATE_READY) {
             mStateBuilder.setState(PlaybackStateCompat.STATE_PAUSED,
                     mExoPlayer.getCurrentPosition(), 1f);
-            Log.i(LOG_TAG, "ExoPlayer is paused.");
+            Log.i(LOG_TAG, getString(R.string.exo_paused));
         }
         mMediaSession.setPlaybackState(mStateBuilder.build());
     }
@@ -426,6 +419,7 @@ public class StepsPlayFragment extends Fragment implements Player.EventListener 
         super.onStart();
         if (Util.SDK_INT > 23) {
             if (stepVideoUrl != null && !stepVideoUrl.isEmpty()) {
+                //initializePlayer(Uri.parse(stepVideoUrl));
             }
         }
     }
@@ -452,6 +446,7 @@ public class StepsPlayFragment extends Fragment implements Player.EventListener 
         super.onResume();
         if (Util.SDK_INT <= 23 || mExoPlayer == null) {
             if (stepVideoUrl != null && !stepVideoUrl.isEmpty()) {
+                //initializePlayer(Uri.parse(stepVideoUrl));
             }
         }
     }
@@ -502,12 +497,14 @@ public class StepsPlayFragment extends Fragment implements Player.EventListener 
 
     }
 
-    public int getShownIndex() {
-        int id;
-        if (getArguments() != null) {
-            return id = getArguments().getInt(STEP_INDEX);
-        } else {
-            return 0;
-        }
-    }
+// --Commented out by Inspection START (6/5/2018 11:17 PM):
+//    public int getShownIndex() {
+//        int id;
+//        if (getArguments() != null) {
+//            return id = getArguments().getInt(STEP_INDEX);
+//        } else {
+//            return 0;
+//        }
+//    }
+// --Commented out by Inspection STOP (6/5/2018 11:17 PM)
 }

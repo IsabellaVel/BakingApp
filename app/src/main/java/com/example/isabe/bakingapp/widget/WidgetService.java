@@ -25,9 +25,9 @@ public class WidgetService extends RemoteViewsService {
     }
 
     public class WidgetDataProvider implements RemoteViewsService.RemoteViewsFactory {
-        private Context mContext;
-        private int mAppWidgetId;
-        List<String> ingredientList = new ArrayList<>();
+        private final Context mContext;
+        private final int mAppWidgetId;
+        final List<String> ingredientList = new ArrayList<>();
 
         public WidgetDataProvider(Context context, Intent intent) {
             mContext = context;
@@ -40,12 +40,14 @@ public class WidgetService extends RemoteViewsService {
            // initData();
         }
 
-        private void initData() {
-            ingredientList.clear();
-            for (int i = 1; i <= ingredientList.size(); i++) {
-                ingredientList.add("ListView item " + i);
-            }
-        }
+// --Commented out by Inspection START (6/5/2018 11:17 PM):
+//        private void initData() {
+//            ingredientList.clear();
+//            for (int i = 1; i <= ingredientList.size(); i++) {
+//                ingredientList.add("ListView item " + i);
+//            }
+//        }
+// --Commented out by Inspection STOP (6/5/2018 11:17 PM)
 
         @Override
         public void onDataSetChanged() {
@@ -72,7 +74,7 @@ public class WidgetService extends RemoteViewsService {
             String ingredString = sharedPreferences.getString
                     (mContext.getString(R.string.ingreds_key), getString(R.string.def_string));
             remoteViews.setTextViewText(R.id.widget_ingred_item, ingredString);
-            Log.i(LOG_TAG, "IngredientsList added to widget.");
+            Log.i(LOG_TAG, getString(R.string.ingreds_widget));
 
             return remoteViews;
         }

@@ -13,7 +13,7 @@ import android.view.View;
 
 public class RecyclerTouchListener implements RecyclerView.OnItemTouchListener{
     private final ItemClickListener itemClickListener;
-    private GestureDetector gestureDetector;
+    private final GestureDetector gestureDetector;
 
     public static interface ItemClickListener{
         void onClick(View view, int position);

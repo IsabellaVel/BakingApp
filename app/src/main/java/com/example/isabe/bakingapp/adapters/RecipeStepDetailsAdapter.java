@@ -1,48 +1,41 @@
 package com.example.isabe.bakingapp.adapters;
 
 import android.content.Context;
-import android.provider.MediaStore;
 import android.support.annotation.NonNull;
-import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.VideoView;
 
 import com.example.isabe.bakingapp.R;
 import com.example.isabe.bakingapp.objects.BakingStep;
-import com.google.android.exoplayer2.SimpleExoPlayer;
 import com.google.android.exoplayer2.ui.PlayerView;
-import com.google.android.exoplayer2.ui.SimpleExoPlayerView;
 import com.squareup.picasso.Picasso;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import butterknife.BindView;
-import butterknife.ButterKnife;
 
 /**
  * Created by isabe on 5/12/2018.
  */
 
-public class RecipeStepDetailsAdapter extends ArrayAdapter<BakingStep> {
+class RecipeStepDetailsAdapter extends ArrayAdapter<BakingStep> {
 
-    private int currentPosition;
-    private Context mContext;
-    public String mVideoUrl;
+    private final int currentPosition;
+    private final Context mContext;
+    private String mVideoUrl;
 
     @BindView(R.id.step_video)
     PlayerView mStepVideo;
+// --Commented out by Inspection STOP (6/5/2018 11:17 PM)
 
     @BindView(R.id.step_image)
     ImageView mStepImage;
 
     @BindView(R.id.step_instructions)
     TextView mDetailedInstructions;
+
 
     public RecipeStepDetailsAdapter(@NonNull Context context, int resource) {
         super(context, resource);

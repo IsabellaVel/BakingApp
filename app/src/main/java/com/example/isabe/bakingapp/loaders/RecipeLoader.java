@@ -6,9 +6,6 @@ import android.support.v4.content.AsyncTaskLoader;
 import com.example.isabe.bakingapp.objects.RecipeContent;
 import com.example.isabe.bakingapp.utilities.NetworkUtils;
 
-import org.json.JSONException;
-
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -33,11 +30,7 @@ public class RecipeLoader extends AsyncTaskLoader<List<RecipeContent>> {
         if (mUrl == null) {
             return null;
         }
-        try {
-            recipeContentList = NetworkUtils.fetchRecipeData(mUrl);
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
+        recipeContentList = NetworkUtils.fetchRecipeData(mUrl);
         return recipeContentList;
     }
 }

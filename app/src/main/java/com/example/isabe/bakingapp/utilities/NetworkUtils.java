@@ -1,14 +1,9 @@
 package com.example.isabe.bakingapp.utilities;
 
-import android.media.MediaActionSound;
-import android.support.v7.widget.LinearLayoutManager;
 import android.util.Log;
 
 import com.example.isabe.bakingapp.objects.BakingStep;
-import com.example.isabe.bakingapp.objects.Ingredient;
 import com.example.isabe.bakingapp.objects.RecipeContent;
-
-import org.json.JSONException;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -29,7 +24,7 @@ public class NetworkUtils {
 
     }
 
-    public static List<RecipeContent> fetchRecipeData(String requestUrl) throws JSONException {
+    public static List<RecipeContent> fetchRecipeData(String requestUrl) {
         URL url = createUrl(requestUrl);
         String jsonResponse = null;
         try {
@@ -42,7 +37,7 @@ public class NetworkUtils {
         return recipeList;
     }
 
-    public static List<BakingStep> fetchStepsData(String requestUrl) throws JSONException {
+    public static List<BakingStep> fetchStepsData(String requestUrl) {
         URL url = createUrl(requestUrl);
         String jsonResponse = null;
         try {
@@ -53,19 +48,6 @@ public class NetworkUtils {
         List<BakingStep> bakingStepList = RecipeDbJSONUtils.getStepFromJSON(jsonResponse);
 
         return bakingStepList;
-    }
-
-    public static List<Ingredient> fetchIngredientData(String requestUrl) throws JSONException {
-        URL url = createUrl(requestUrl);
-        String jsonResponse = null;
-        try {
-            jsonResponse = getResponseFromHttpUrl(url);
-        } catch (IOException e) {
-            Log.e(LOG_TAG, "Problem making the HTTP request.", e);
-        }
-        List<Ingredient> ingredientList = RecipeDbJSONUtils.getIgredientsFromJSON(jsonResponse);
-
-        return ingredientList;
     }
 
     public static URL createUrl(String strignUrl) {
@@ -101,6 +83,6 @@ public class NetworkUtils {
             }
         } finally {
             urlConnection.disconnect();
-        }
+            }
     }
 }

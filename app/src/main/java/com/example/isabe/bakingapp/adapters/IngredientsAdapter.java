@@ -24,10 +24,11 @@ import butterknife.ButterKnife;
  */
 
 public class IngredientsAdapter extends RecyclerView.Adapter<IngredientsAdapter.ViewHolder> {
-    public List<Ingredient> ingredientList = new ArrayList();
+    private List<Ingredient> ingredientList = new ArrayList();
     @BindView(R.id.ingreds_details)
     TextView recipeIngreds;
-    Context mContext;
+
+    private final Context mContext;
     @BindString(R.string.recipe_ingredients)
     String stIngredsHeader;
 
@@ -54,8 +55,8 @@ public class IngredientsAdapter extends RecyclerView.Adapter<IngredientsAdapter.
         final String ingredUnit = mIngredItem.getUnit();
 
         StringBuilder stringBuilder = new StringBuilder();
-        stIngredsHeader = "<b>" + "Recipe Ingredients: " + "<b> ";
-       // stringBuilder.append(Html.fromHtml(stIngredsHeader));
+        stIngredsHeader = "<b>" + mContext.getString(R.string.ingredients) + "<b> ";
+        // stringBuilder.append(Html.fromHtml(stIngredsHeader));
 
         for (int iIngred = 0; iIngred < ingredientList.size(); iIngred++) {
             mIngredItem = ingredientList.get(position);
@@ -88,7 +89,7 @@ public class IngredientsAdapter extends RecyclerView.Adapter<IngredientsAdapter.
     public class ViewHolder extends RecyclerView.ViewHolder {
         public final View mView;
         @BindView(R.id.ingreds_details)
-        public TextView tvIngreds;
+        TextView tvIngreds;
 
         public ViewHolder(View itemView) {
             super(itemView);
@@ -101,5 +102,4 @@ public class IngredientsAdapter extends RecyclerView.Adapter<IngredientsAdapter.
         return ingredientList.get(position);
 
     }
-
 }

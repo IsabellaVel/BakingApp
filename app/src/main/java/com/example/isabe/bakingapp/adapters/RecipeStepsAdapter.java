@@ -26,12 +26,12 @@ import butterknife.ButterKnife;
 
 public class RecipeStepsAdapter extends RecyclerView.Adapter<RecipeStepsAdapter.ViewHolder> {
     private List<BakingStep> stepList = new ArrayList<>();
-    public RecyclerTouchListener.ItemClickListener mRecyclerTouchListener;
-    public int adapterPosition;
-    public int selectedPosition = -1;
+    private final RecyclerTouchListener.ItemClickListener mRecyclerTouchListener;
+    private int adapterPosition;
+    private int selectedPosition = -1;
     private View mView;
-    private static int DEFAULT_STEP_POSITION = 0;
-    private Context mContext;
+    // --Commented out by Inspection (6/5/2018 11:17 PM):private static int DEFAULT_STEP_POSITION = 0;
+    private final Context mContext;
     private RecipeContent recipeItem;
     private BakingStep stepItem;
     private ViewHolder viewHolder;
@@ -39,11 +39,10 @@ public class RecipeStepsAdapter extends RecyclerView.Adapter<RecipeStepsAdapter.
     @BindView(R.id.list_step_name)
     TextView mStepName;
 
-    /**
-     * public interface OnStepClickListener {
-     * void onClick(int stepId);
-     * }
-     **/
+    public interface OnStepClickListener {
+        void onClick(int stepId);
+    }
+
     public RecipeStepsAdapter(Context context, List<BakingStep> steps, RecyclerTouchListener listener) {
         mContext = context;
         stepList = steps;
@@ -58,7 +57,7 @@ public class RecipeStepsAdapter extends RecyclerView.Adapter<RecipeStepsAdapter.
             super(itemView);
             mView = itemView;
             ButterKnife.bind(this, itemView);
-            itemView.setOnClickListener((View.OnClickListener) this);
+            itemView.setOnClickListener(this);
         }
 
         @Override
@@ -112,9 +111,11 @@ public class RecipeStepsAdapter extends RecyclerView.Adapter<RecipeStepsAdapter.
 
     }
 
-    public void clear() {
-        stepList.clear();
-    }
+// --Commented out by Inspection START (6/5/2018 11:17 PM):
+//    public void clear() {
+//        stepList.clear();
+//    }
+// --Commented out by Inspection STOP (6/5/2018 11:17 PM)
 
     public void addAll(List<BakingStep> list) {
         stepList.addAll(list);

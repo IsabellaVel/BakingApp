@@ -19,7 +19,6 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.example.isabe.bakingapp.adapters.IngredientsAdapter;
-import com.example.isabe.bakingapp.adapters.RecipeListAdapter;
 import com.example.isabe.bakingapp.adapters.RecipeStepsAdapter;
 import com.example.isabe.bakingapp.adapters.RecyclerTouchListener;
 import com.example.isabe.bakingapp.objects.BakingStep;
@@ -52,7 +51,7 @@ public class RecipeDetailFragment extends Fragment {
     public static final String STEP_INDEX = "index";
 
     private RecipeStepsAdapter recipeStepsAdapter;
-    private RecipeListAdapter mRecipeAdapter;
+    // --Commented out by Inspection (6/5/2018 11:17 PM):private RecipeListAdapter mRecipeAdapter;
     private static List<BakingStep> mBakingSteps = new ArrayList<>();
     private List<Ingredient> mIngredients = new ArrayList<>();
     private Ingredient mIngredItem;
@@ -63,9 +62,10 @@ public class RecipeDetailFragment extends Fragment {
 
     @BindView(R.id.recipe_steps_list_rv)
     RecyclerView mRecipeStepsRecyclerView;
-    public LinearLayoutManager layoutManager;
+    private LinearLayoutManager layoutManager;
     @BindBool(R.bool.two_pane_mode)
     boolean mTwoPane;
+    // --Commented out by Inspection STOP (6/5/2018 11:17 PM)
     private int mCurrCheckedPosition = 0;
     private BakingStep thisRecipeStep;
     @BindString(R.string.recipe_ingredients)
@@ -74,11 +74,8 @@ public class RecipeDetailFragment extends Fragment {
     @BindBool(R.bool.isTablet)
     boolean tabletSize;
 
-    public String stringIngreds;
-    RecipeContent recipeContent;
-
-
-    int ingredId;
+    private String stringIngreds;
+    private RecipeContent recipeContent;
 
     public static RecipeDetailFragment newInstance(int recipeNo) {
         RecipeDetailFragment recipeDetailFragment = new RecipeDetailFragment();
@@ -88,7 +85,6 @@ public class RecipeDetailFragment extends Fragment {
         recipeDetailFragment.setArguments(bundle);
         return recipeDetailFragment;
     }
-
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
      * fragment (e.g. upon screen orientation changes).
@@ -126,34 +122,6 @@ public class RecipeDetailFragment extends Fragment {
         }
     }
 
-    /**
-     * private void showStepsPlayer(int index) {
-     * mCurrCheckedPosition = index;
-     * <p>
-     * if (tabletSize) {
-     * <p>
-     * FragmentManager fm = getFragmentManager();
-     * android.support.v4.app.FragmentTransaction fragmentTransaction = fm.beginTransaction();
-     * <p>
-     * StepsPlayFragment stepsPlayerFragment = StepsPlayFragment.newInstance(index);
-     * <p>
-     * if (stepsPlayerFragment == null || stepsPlayerFragment.getShownIndex() != index) {
-     * <p>
-     * if (index == 0) {
-     * fragmentTransaction.replace(R.id.frame_player, stepsPlayerFragment);
-     * } else {
-     * fragmentTransaction.replace(R.id.frame_player, stepsPlayerFragment);
-     * }
-     * <p>
-     * fragmentTransaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE);
-     * fragmentTransaction.commit();
-     * Log.i(LOG_TAG, "ShowStepsPlayer functioning.");
-     * }
-     * }
-     * }
-     **/
-
-
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -169,7 +137,7 @@ public class RecipeDetailFragment extends Fragment {
         }
 
         Activity activity = this.getActivity();
-        CollapsingToolbarLayout appBarLayout = (CollapsingToolbarLayout) activity.findViewById(R.id.toolbar_layout);
+        CollapsingToolbarLayout appBarLayout = activity.findViewById(R.id.toolbar_layout);
         if (appBarLayout != null) {
             appBarLayout.setTitle(recipeContent.getRecipeName());
         }
@@ -197,19 +165,19 @@ public class RecipeDetailFragment extends Fragment {
 
         if (mBakingSteps != null && mBakingSteps.isEmpty()) {
             recipeStepsAdapter.addAll(mBakingSteps);
-            Log.e(LOG_TAG, "Successful LoadFinished for List of Steps per Recipe.");
+            Log.e(LOG_TAG, getString(R.string.load_finished_steps));
 
         }
 
         return rootView;
     }
 
-    public void showIngredients(List<Ingredient> ingreds) {
+    private void showIngredients(List<Ingredient> ingreds) {
         mIngredientsAdapter = new IngredientsAdapter(getActivity(), ingreds);
         mIngredientsAdapter.setHasStableIds(true);
 
         StringBuilder stringBuilder = new StringBuilder();
-        stIngredsHeader = "<b>" + "Recipe Ingredients: " + "<b> ";
+        stIngredsHeader = "<b>" + getString(R.string.ingredients) + "<b> ";
         //  stringBuilder.append(Html.fromHtml(stIngredsHeader));
         for (int iIngred = 0; iIngred < mIngredients.size(); iIngred++) {
 
@@ -225,7 +193,7 @@ public class RecipeDetailFragment extends Fragment {
 
     }
 
-    public String prepareIngredsString(List<Ingredient> ingredientsList) {
+    private String prepareIngredsString(List<Ingredient> ingredientsList) {
         StringBuilder stringBuilder = new StringBuilder();
         for (int iIngred = 0; iIngred < mIngredients.size(); iIngred++) {
 
@@ -240,7 +208,7 @@ public class RecipeDetailFragment extends Fragment {
         return stringBuilder.toString().toLowerCase().trim();
     }
 
-    public void saveIngreds(String recipeName, String stringIngreds) {
+    private void saveIngreds(String recipeName, String stringIngreds) {
         Activity activity = getActivity();
         SharedPreferences sharedPreferences = activity.getSharedPreferences(
                 activity.getString(R.string.ingreds_file_key), Context.MODE_PRIVATE);
@@ -255,15 +223,15 @@ public class RecipeDetailFragment extends Fragment {
         intent.setAction("android.appwidget.action.APPWIDGET_UPDATE");
         int appWidgetIds[] = AppWidgetManager.getInstance(activity.getApplication())
                 .getAppWidgetIds(new ComponentName(activity.getApplication(),
-                RecipeWidgetProvider.class));
+                        RecipeWidgetProvider.class));
         intent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS, appWidgetIds);
         activity.sendBroadcast(intent);
 
-        Log.i(LOG_TAG, "Recipe saved in SharedPreferences.");
+        Log.i(LOG_TAG, getString(R.string.recipes_saved_shared));
 
     }
 
-    public void setUpRecyclerListener(RecyclerView recyclerListener) {
+    private void setUpRecyclerListener(RecyclerView recyclerListener) {
         mRecipeStepsRecyclerView = recyclerListener;
 
         mRecipeStepsRecyclerView.addOnItemTouchListener(new RecyclerTouchListener(getContext(), mRecipeStepsRecyclerView,
@@ -324,9 +292,11 @@ public class RecipeDetailFragment extends Fragment {
         return mBakingSteps;
     }
 
-    public List<Ingredient> getmIngredients() {
-        return mIngredients;
-    }
+// --Commented out by Inspection START (6/5/2018 11:17 PM):
+//    public List<Ingredient> getmIngredients() {
+//        return mIngredients;
+//    }
+// --Commented out by Inspection STOP (6/5/2018 11:17 PM)
 
 }
 

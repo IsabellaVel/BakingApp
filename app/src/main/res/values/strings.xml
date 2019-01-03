@@ -16,4 +16,18 @@
     <string name="ingreds_recipe_key">recipe_prefs</string>
     <string name="ingreds_key">ingreds_prefs</string>
     <string name="def_string">No ingredients saved</string>
+    <string name="saved_step_id">Saved instance state</string>
+    <string name="saved_playback_pos">Saved instance state playback position</string>
+    <string name="video_step">Video Step</string>
+    <string name="release_playback_pos">Current playback position is</string>
+    <string name="onSave_playback_pos">Saved playback position</string>
+    <string name="exo_playing">ExoPlayer is playing.</string>
+    <string name="exo_paused">ExoPlayer is paused.</string>
+    <string name="load_finished_recipes">Successful LoadFinished for List of Recipes.</string>
+    <string name="load_finished_steps">Successful LoadFinished for List of Steps per Recipe.</string>
+    <string name="ingredients">Recipe Ingredients:</string>
+    <string name="recipes_saved_shared">Recipe saved in SharedPreferences.</string>
+    <string name="ingreds_widget">IngredientsList added to widget.</string>
+    <string name="nutella_text">Nutella Pie</string>
+    <string name="playback_state">playback state</string>
 </resources>

@@ -18,7 +18,7 @@ import java.util.List;
  * Created by isabe on 5/5/2018.
  */
 
-public class RecipeDbJSONUtils {
+class RecipeDbJSONUtils {
     private static final String RECIPE_ID = "id";
     private static final String RECIPE_NAME = "name";
     private static final String RECIPE_STEPS = "steps";
@@ -97,45 +97,47 @@ public class RecipeDbJSONUtils {
         return recipeJsonList;
     }
 
-    public static List<Ingredient> getIgredientsFromJSON(String recipeJSONString) {
-        if (TextUtils.isEmpty(recipeJSONString)) {
-            return null;
-        }
-
-        List<Ingredient> ingredientList = new ArrayList<Ingredient>();
-
-        try {
-            JSONArray recipesJSONArray = new JSONArray(recipeJSONString);
-            ArrayList<Ingredient> ingredientArrayList = new ArrayList<>();
-
-            for (int i = 0; i < recipesJSONArray.length(); i++) {
-                JSONObject currentRecipe = recipesJSONArray.getJSONObject(i);
-                JSONArray recipesIngreds = currentRecipe.getJSONArray(RECIPE_INGREDIENTS);
-                ArrayList<Ingredient> ingredientsList = new ArrayList<>();
-
-                for (int iIngr = 0; iIngr < recipesIngreds.length(); iIngr++) {
-                    JSONObject currentIngreds = recipesIngreds.getJSONObject(iIngr);
-                    int qty = currentIngreds.optInt(RECIPE_QUANTITY);
-                    String measure = currentIngreds.optString(RECIPE_MEASURE);
-                    String ingredient = currentIngreds.optString(RECIPE_INGREDIENT);
-
-                    Ingredient ingredInList = new Ingredient(qty, measure, ingredient);
-                    ingredientsList.add(ingredInList);
-                }
-            }
-        } catch (JSONException e) {
-            e.printStackTrace();
-            Log.e(LOG_TAG, "Problem parsing Ingredients JSON results.", e);
-        }
-        return ingredientList;
-    }
+// --Commented out by Inspection START (6/5/2018 11:17 PM):
+//    public static List<Ingredient> getIgredientsFromJSON(String recipeJSONString) {
+//        if (TextUtils.isEmpty(recipeJSONString)) {
+//            return null;
+//        }
+//
+//        List<Ingredient> ingredientList = new ArrayList<>();
+//
+//        try {
+//            JSONArray recipesJSONArray = new JSONArray(recipeJSONString);
+//            ArrayList<Ingredient> ingredientArrayList = new ArrayList<>();
+//
+//            for (int i = 0; i < recipesJSONArray.length(); i++) {
+//                JSONObject currentRecipe = recipesJSONArray.getJSONObject(i);
+//                JSONArray recipesIngreds = currentRecipe.getJSONArray(RECIPE_INGREDIENTS);
+//                ArrayList<Ingredient> ingredientsList = new ArrayList<>();
+//
+//                for (int iIngr = 0; iIngr < recipesIngreds.length(); iIngr++) {
+//                    JSONObject currentIngreds = recipesIngreds.getJSONObject(iIngr);
+//                    int qty = currentIngreds.optInt(RECIPE_QUANTITY);
+//                    String measure = currentIngreds.optString(RECIPE_MEASURE);
+//                    String ingredient = currentIngreds.optString(RECIPE_INGREDIENT);
+//
+//                    Ingredient ingredInList = new Ingredient(qty, measure, ingredient);
+//                    ingredientsList.add(ingredInList);
+//                }
+//            }
+//        } catch (JSONException e) {
+//            e.printStackTrace();
+//            Log.e(LOG_TAG, "Problem parsing Ingredients JSON results.", e);
+//        }
+//        return ingredientList;
+//    }
+// --Commented out by Inspection STOP (6/5/2018 11:17 PM)
 
     public static List<BakingStep> getStepFromJSON(String recipeJSONString) {
         if (TextUtils.isEmpty(recipeJSONString)) {
             return null;
         }
 
-        List<BakingStep> bakingStepList = new ArrayList<BakingStep>();
+        List<BakingStep> bakingStepList = new ArrayList<>();
 
         try {
             JSONArray recipesJSONArray = new JSONArray(recipeJSONString);

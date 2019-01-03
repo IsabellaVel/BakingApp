@@ -2,15 +2,14 @@ package com.example.isabe.bakingapp;
 
 import android.content.Context;
 import android.content.Intent;
-import android.content.res.Configuration;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.support.annotation.Nullable;
 import android.support.v4.app.NavUtils;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
+import android.view.WindowManager;
 
 import com.example.isabe.bakingapp.objects.BakingStep;
 import com.example.isabe.bakingapp.objects.RecipeContent;
@@ -18,7 +17,6 @@ import com.example.isabe.bakingapp.objects.RecipeContent;
 import java.util.List;
 
 import butterknife.BindBool;
-import butterknife.BindView;
 
 import static com.example.isabe.bakingapp.RecipeDetailFragment.STEP_SELECTION;
 
@@ -27,13 +25,13 @@ import static com.example.isabe.bakingapp.RecipeDetailFragment.STEP_SELECTION;
  */
 
 public class RecipeStepActivity extends AppCompatActivity {
-    public static final String RECIPE_ID = "RECIPE_ID";
+    private static final String RECIPE_ID = "RECIPE_ID";
     private static final int DEFAULT_RECIPE_ID = 0;
     private static final String STEP_ID = "STEP_ID";
     private static final int DEFAULT_STEP_ID = 0;
-    public BakingStep mStepItem;
+    private BakingStep mStepItem;
     private RecipeContent recipeItem;
-    public static List<BakingStep> thisRecipeSteps;
+    private static List<BakingStep> thisRecipeSteps;
     int stepId;
     int recipeId;
     @BindBool(R.bool.isTablet)
@@ -45,8 +43,9 @@ public class RecipeStepActivity extends AppCompatActivity {
         intent.putExtra(STEP_ID, stepId);
         return intent;
     }
+// --Commented out by Inspection STOP (6/5/2018 11:17 PM)
 
-    public StepsPlayFragment attachSteps(Context context, Parcelable step) {
+    private void attachSteps(Context context, Parcelable step) {
         context = getBaseContext();
         Bundle bundle = new Bundle();
         bundle.putParcelable(STEP_SELECTION, mStepItem);
@@ -57,7 +56,6 @@ public class RecipeStepActivity extends AppCompatActivity {
                 .add(R.id.stepFragmentContainer, playFragment)
                 .commit();
 
-        return playFragment;
     }
 
 
@@ -101,6 +99,10 @@ public class RecipeStepActivity extends AppCompatActivity {
 
         //add parcelable for steps of recipe
         recipeItem = getIntent().getParcelableExtra(RecipeListFragment.RECIPE_SELECTION);
+
+        if(BuildConfig.DEBUG){
+            getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+        }
     }
 
     @Override
@@ -114,7 +116,9 @@ public class RecipeStepActivity extends AppCompatActivity {
                 return super.onOptionsItemSelected(item);
         }
     }
-}
+    }
+
+
 
 
 

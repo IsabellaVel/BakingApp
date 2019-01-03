@@ -7,14 +7,14 @@ import android.os.Parcelable;
  * Created by isabe on 5/5/2018.
  */
 
-public class BakingStep implements Parcelable{
-    public int id;
-    public String briefStepDescription;
-    public String longStepDescription;
-    public String videoUrl;
-    public String thumbnailStepUrl;
+public class BakingStep implements Parcelable {
+    private final int id;
+    private final String briefStepDescription;
+    private final String longStepDescription;
+    private final String videoUrl;
+    private final String thumbnailStepUrl;
 
-    public BakingStep(int id, String shortDesc, String longDesc, String video, String image){
+    public BakingStep(int id, String shortDesc, String longDesc, String video, String image) {
         this.id = id;
         this.briefStepDescription = shortDesc;
         this.longStepDescription = longDesc;
@@ -22,7 +22,7 @@ public class BakingStep implements Parcelable{
         this.thumbnailStepUrl = image;
     }
 
-    protected BakingStep(Parcel in) {
+    BakingStep(Parcel in) {
         id = in.readInt();
         briefStepDescription = in.readString();
         longStepDescription = in.readString();
@@ -41,6 +41,7 @@ public class BakingStep implements Parcelable{
             return new BakingStep[size];
         }
     };
+
 
     public int getId() {
         return id;
